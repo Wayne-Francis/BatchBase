@@ -1,0 +1,85 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="Page-1" id="ayb9DCZebQC-njthpt0u">
+    <mxGraphModel dx="1406" dy="780" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="ggjUxefsrb4eZEgSUxZG-11" edge="1" parent="1" source="ggjUxefsrb4eZEgSUxZG-1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="ggjUxefsrb4eZEgSUxZG-7" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ggjUxefsrb4eZEgSUxZG-1" parent="1" style="swimlane;childLayout=stackLayout;horizontal=1;startSize=50;horizontalStack=0;rounded=1;fontSize=14;fontStyle=0;strokeWidth=2;resizeParent=0;resizeLast=1;shadow=0;dashed=0;align=center;arcSize=4;whiteSpace=wrap;html=1;" value="RAW_MATERIALS" vertex="1">
+          <mxGeometry height="140" width="185" x="27.5" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="ggjUxefsrb4eZEgSUxZG-2" parent="ggjUxefsrb4eZEgSUxZG-1" style="align=left;strokeColor=none;fillColor=none;spacingLeft=4;spacingRight=4;fontSize=12;verticalAlign=top;resizable=0;rotatable=0;part=1;html=1;whiteSpace=wrap;" value="&lt;ul&gt;&lt;li&gt;Material Lot Batch&amp;nbsp;&lt;/li&gt;&lt;li&gt;Material Type&amp;nbsp;&lt;/li&gt;&lt;li&gt;MFG Date&amp;nbsp;&lt;/li&gt;&lt;li&gt;Expiry Date&lt;/li&gt;&lt;/ul&gt;" vertex="1">
+          <mxGeometry height="90" width="185" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="ggjUxefsrb4eZEgSUxZG-3" parent="1" style="swimlane;childLayout=stackLayout;horizontal=1;startSize=50;horizontalStack=0;rounded=1;fontSize=14;fontStyle=0;strokeWidth=2;resizeParent=0;resizeLast=1;shadow=0;dashed=0;align=center;arcSize=4;whiteSpace=wrap;html=1;" value="BLEND" vertex="1">
+          <mxGeometry height="140" width="220" x="10" y="380" as="geometry" />
+        </mxCell>
+        <mxCell id="ggjUxefsrb4eZEgSUxZG-4" parent="ggjUxefsrb4eZEgSUxZG-3" style="align=left;strokeColor=none;fillColor=none;spacingLeft=4;spacingRight=4;fontSize=12;verticalAlign=top;resizable=0;rotatable=0;part=1;html=1;whiteSpace=wrap;" value="&lt;ul&gt;&lt;li&gt;IP Batch&lt;/li&gt;&lt;li&gt;MFG (blending) Start Date&lt;/li&gt;&lt;li&gt;MFG (blending) End Date&lt;/li&gt;&lt;li&gt;IP Blend Hold Time Date&lt;/li&gt;&lt;/ul&gt;" vertex="1">
+          <mxGeometry height="90" width="220" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="ggjUxefsrb4eZEgSUxZG-9" edge="1" parent="1" source="ggjUxefsrb4eZEgSUxZG-6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;startArrow=classicThin;startFill=1;" target="ggjUxefsrb4eZEgSUxZG-3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ggjUxefsrb4eZEgSUxZG-12" edge="1" parent="1" source="ggjUxefsrb4eZEgSUxZG-6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=classic;startFill=1;" target="ggjUxefsrb4eZEgSUxZG-2" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ggjUxefsrb4eZEgSUxZG-6" parent="1" style="swimlane;childLayout=stackLayout;horizontal=1;startSize=50;horizontalStack=0;rounded=1;fontSize=14;fontStyle=0;strokeWidth=2;resizeParent=0;resizeLast=1;shadow=0;dashed=0;align=center;arcSize=4;whiteSpace=wrap;html=1;" value="BATCH_MATERIAL_USAGE" vertex="1">
+          <mxGeometry height="120" width="210" x="15" y="210" as="geometry" />
+        </mxCell>
+        <mxCell id="ggjUxefsrb4eZEgSUxZG-7" parent="ggjUxefsrb4eZEgSUxZG-6" style="align=left;strokeColor=none;fillColor=none;spacingLeft=4;spacingRight=4;fontSize=12;verticalAlign=top;resizable=0;rotatable=0;part=1;html=1;whiteSpace=wrap;" value="&lt;ul&gt;&lt;li&gt;IP Batch&lt;/li&gt;&lt;li&gt;Material Lot Batch&lt;/li&gt;&lt;/ul&gt;" vertex="1">
+          <mxGeometry height="70" width="210" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="ggjUxefsrb4eZEgSUxZG-14" parent="1" style="swimlane;childLayout=stackLayout;horizontal=1;startSize=50;horizontalStack=0;rounded=1;fontSize=14;fontStyle=0;strokeWidth=2;resizeParent=0;resizeLast=1;shadow=0;dashed=0;align=center;arcSize=4;whiteSpace=wrap;html=1;" value="FILL" vertex="1">
+          <mxGeometry height="140" width="220" x="10" y="570" as="geometry" />
+        </mxCell>
+        <mxCell id="ggjUxefsrb4eZEgSUxZG-15" parent="ggjUxefsrb4eZEgSUxZG-14" style="align=left;strokeColor=none;fillColor=none;spacingLeft=4;spacingRight=4;fontSize=12;verticalAlign=top;resizable=0;rotatable=0;part=1;html=1;whiteSpace=wrap;" value="&lt;ul&gt;&lt;li&gt;IP Batch&lt;/li&gt;&lt;li&gt;Filling Start Date&lt;/li&gt;&lt;li&gt;Filling End Date&lt;/li&gt;&lt;li&gt;IP Disc Hold Time Date&lt;/li&gt;&lt;/ul&gt;" vertex="1">
+          <mxGeometry height="90" width="220" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="ggjUxefsrb4eZEgSUxZG-16" edge="1" parent="1" source="ggjUxefsrb4eZEgSUxZG-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=classic;startFill=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="ggjUxefsrb4eZEgSUxZG-14" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ggjUxefsrb4eZEgSUxZG-19" edge="1" parent="1" source="ggjUxefsrb4eZEgSUxZG-18" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.005;exitY=0.44;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;exitPerimeter=0;startArrow=classic;startFill=1;" target="ggjUxefsrb4eZEgSUxZG-15">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ggjUxefsrb4eZEgSUxZG-17" parent="1" style="swimlane;childLayout=stackLayout;horizontal=1;startSize=50;horizontalStack=0;rounded=1;fontSize=14;fontStyle=0;strokeWidth=2;resizeParent=0;resizeLast=1;shadow=0;dashed=0;align=center;arcSize=4;whiteSpace=wrap;html=1;" value="ASSEMBLY" vertex="1">
+          <mxGeometry height="150" width="220" x="290" y="570" as="geometry" />
+        </mxCell>
+        <mxCell id="ggjUxefsrb4eZEgSUxZG-18" parent="ggjUxefsrb4eZEgSUxZG-17" style="align=left;strokeColor=none;fillColor=none;spacingLeft=4;spacingRight=4;fontSize=12;verticalAlign=top;resizable=0;rotatable=0;part=1;html=1;whiteSpace=wrap;" value="&lt;ul&gt;&lt;li&gt;IP Batch&lt;/li&gt;&lt;li&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;FP Batch&lt;/span&gt;&lt;/li&gt;&lt;li&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;Assembly Start Date&lt;/span&gt;&lt;/li&gt;&lt;li&gt;Assembly End Date&lt;/li&gt;&lt;li&gt;FP Batch EXP Date&lt;/li&gt;&lt;/ul&gt;" vertex="1">
+          <mxGeometry height="100" width="220" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="ggjUxefsrb4eZEgSUxZG-30" edge="1" parent="1" source="ggjUxefsrb4eZEgSUxZG-20" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.25;entryDx=0;entryDy=0;startArrow=classic;startFill=1;" target="ggjUxefsrb4eZEgSUxZG-27">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ggjUxefsrb4eZEgSUxZG-20" parent="1" style="swimlane;childLayout=stackLayout;horizontal=1;startSize=50;horizontalStack=0;rounded=1;fontSize=14;fontStyle=0;strokeWidth=2;resizeParent=0;resizeLast=1;shadow=0;dashed=0;align=center;arcSize=4;whiteSpace=wrap;html=1;" value="IP QC Results" vertex="1">
+          <mxGeometry height="150" width="220" x="280" y="375" as="geometry" />
+        </mxCell>
+        <mxCell id="ggjUxefsrb4eZEgSUxZG-21" parent="ggjUxefsrb4eZEgSUxZG-20" style="align=left;strokeColor=none;fillColor=none;spacingLeft=4;spacingRight=4;fontSize=12;verticalAlign=top;resizable=0;rotatable=0;part=1;html=1;whiteSpace=wrap;" value="&lt;ul&gt;&lt;li&gt;IP Batch&lt;/li&gt;&lt;li&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;Test Name&lt;/span&gt;&lt;/li&gt;&lt;li&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;Test Date&lt;/span&gt;&lt;/li&gt;&lt;li&gt;Replicate&lt;/li&gt;&lt;li&gt;Result&lt;/li&gt;&lt;/ul&gt;" vertex="1">
+          <mxGeometry height="100" width="220" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="ggjUxefsrb4eZEgSUxZG-22" edge="1" parent="1" source="ggjUxefsrb4eZEgSUxZG-21" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=classic;startFill=1;" target="ggjUxefsrb4eZEgSUxZG-4" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ggjUxefsrb4eZEgSUxZG-25" edge="1" parent="1" source="ggjUxefsrb4eZEgSUxZG-23" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=classic;startFill=1;" target="ggjUxefsrb4eZEgSUxZG-18" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ggjUxefsrb4eZEgSUxZG-23" parent="1" style="swimlane;childLayout=stackLayout;horizontal=1;startSize=50;horizontalStack=0;rounded=1;fontSize=14;fontStyle=0;strokeWidth=2;resizeParent=0;resizeLast=1;shadow=0;dashed=0;align=center;arcSize=4;whiteSpace=wrap;html=1;" value="FP QC Results" vertex="1">
+          <mxGeometry height="150" width="220" x="580" y="595" as="geometry" />
+        </mxCell>
+        <mxCell id="ggjUxefsrb4eZEgSUxZG-24" parent="ggjUxefsrb4eZEgSUxZG-23" style="align=left;strokeColor=none;fillColor=none;spacingLeft=4;spacingRight=4;fontSize=12;verticalAlign=top;resizable=0;rotatable=0;part=1;html=1;whiteSpace=wrap;" value="&lt;ul&gt;&lt;li&gt;FP Batch&lt;/li&gt;&lt;li&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;Test Name&lt;/span&gt;&lt;/li&gt;&lt;li&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;Test Date&lt;/span&gt;&lt;/li&gt;&lt;li&gt;Replicate&lt;/li&gt;&lt;li&gt;Result&lt;/li&gt;&lt;/ul&gt;" vertex="1">
+          <mxGeometry height="100" width="220" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="ggjUxefsrb4eZEgSUxZG-26" parent="1" style="swimlane;childLayout=stackLayout;horizontal=1;startSize=50;horizontalStack=0;rounded=1;fontSize=14;fontStyle=0;strokeWidth=2;resizeParent=0;resizeLast=1;shadow=0;dashed=0;align=center;arcSize=4;whiteSpace=wrap;html=1;" value="Specification" vertex="1">
+          <mxGeometry height="150" width="220" x="570" y="375" as="geometry" />
+        </mxCell>
+        <mxCell id="ggjUxefsrb4eZEgSUxZG-27" parent="ggjUxefsrb4eZEgSUxZG-26" style="align=left;strokeColor=none;fillColor=none;spacingLeft=4;spacingRight=4;fontSize=12;verticalAlign=top;resizable=0;rotatable=0;part=1;html=1;whiteSpace=wrap;" value="&lt;ul&gt;&lt;li&gt;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;Test Name&lt;/span&gt;&lt;/li&gt;&lt;li&gt;Min Result&lt;/li&gt;&lt;li&gt;Max Result&lt;/li&gt;&lt;li&gt;Max RSD&lt;/li&gt;&lt;/ul&gt;" vertex="1">
+          <mxGeometry height="100" width="220" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="ggjUxefsrb4eZEgSUxZG-31" edge="1" parent="1" source="ggjUxefsrb4eZEgSUxZG-26" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.455;entryY=0.02;entryDx=0;entryDy=0;entryPerimeter=0;startArrow=classic;startFill=1;" target="ggjUxefsrb4eZEgSUxZG-23">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
