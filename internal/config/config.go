@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 )
 
-const configFileName = ".batchbaseconfig.json"
+const configFileName = ".BatchBaseconfig.json"
 
 type Config struct {
 	Dburl           string `json:"db_url"`
