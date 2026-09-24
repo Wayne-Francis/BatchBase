@@ -4,37 +4,42 @@ import (
 	"log"
 	"os"
 
-	"github.com/Wayne_Francis/BatchBase/internal/config"
-)
+	"database/sql"
 
-type state struct {
-	cfg *config.Config
-}
+	"github.com/Wayne_Francis/BatchBase/internal/config"
+	"github.com/Wayne_Francis/BatchBase/internal/database"
+	_ "github.com/lib/pq"
+)
 
 func main() {
 	cfg, err := config.Read()
 	if err != nil {
-		log.Fatalf("error reading config: %v", err)
+		log.Fatalf("error: %v", err)
 	}
-
-	programState := &state{
-		cfg: &cfg,
+	db, err := sql.Open("postgres", cfg.Dburl)
+	if err != nil {
+		log.Fatalf("error connecting to db: %v", err)
 	}
-
+	defer db.Close()
+	dbQueries := database.New(db)
+	s := &state{cfg: &cfg, db: dbQueries}
 	cmds := commands{
-		registeredCommands: make(map[string]func(*state, command) error),
+		registeredCommands: map[string]func(*state, command) error{},
 	}
 	cmds.register("login", handlerLogin)
-
-	if len(os.Args) < 2 {
-		log.Fatal("Usage: cli <command> [args...]")
+	cmds.register("register", handlerRegister)
+	cmds.register("reset", handlerReset)
+	cmds.register("users", handlerUsers)
+	args := os.Args
+	if len(args) < 2 {
+		log.Fatalf("please type commands")
 	}
-
-	cmdName := os.Args[1]
-	cmdArgs := os.Args[2:]
-
-	err = cmds.run(programState, command{Name: cmdName, Args: cmdArgs})
+	c := command{
+		Name: args[1],
+		Args: args[2:],
+	}
+	err = cmds.run(s, c)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("error: %v", err)
 	}
 }

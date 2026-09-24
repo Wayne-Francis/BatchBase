@@ -1,10 +1,20 @@
 package main
 
-import "errors"
+import (
+	"errors"
+
+	"github.com/Wayne_Francis/BatchBase/internal/config"
+	"github.com/Wayne_Francis/BatchBase/internal/database"
+)
 
 type command struct {
 	Name string
 	Args []string
+}
+
+type state struct {
+	db  *database.Queries
+	cfg *config.Config
 }
 
 type commands struct {
