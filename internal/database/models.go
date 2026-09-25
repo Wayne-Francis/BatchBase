@@ -19,13 +19,15 @@ type Assembly struct {
 	AssemblyStartDate     time.Time
 	AssemblyEndDate       time.Time
 	FinishedProductExpiry sql.NullTime
+	CreatedBy             uuid.UUID
 }
 
 type BatchMaterialUsage struct {
 	InProcessBatchLot uuid.UUID
-	MaterialLot       uuid.UUID
+	MaterialLot       string
 	CreatedAt         time.Time
 	UpdatedAt         time.Time
+	CreatedBy         uuid.UUID
 }
 
 type Blend struct {
@@ -35,6 +37,7 @@ type Blend struct {
 	BlendStartDate            time.Time
 	BlendEndDate              time.Time
 	InProcessBlendHoldEndDate sql.NullTime
+	CreatedBy                 uuid.UUID
 }
 
 type Fill struct {
@@ -44,6 +47,7 @@ type Fill struct {
 	FillStartDate            time.Time
 	FillEndDate              time.Time
 	InProcessDiscHoldEndDate sql.NullTime
+	CreatedBy                uuid.UUID
 }
 
 type IpcQcResult struct {
@@ -54,15 +58,17 @@ type IpcQcResult struct {
 	Replicate         int32
 	TestDate          time.Time
 	Result            sql.NullString
+	CreatedBy         uuid.UUID
 }
 
 type Material struct {
-	MaterialLot  uuid.UUID
+	MaterialLot  string
 	CreatedAt    time.Time
 	UpdatedAt    time.Time
 	MaterialType string
 	MfgDate      time.Time
 	ExpDate      time.Time
+	CreatedBy    uuid.UUID
 }
 
 type QcRelease struct {
@@ -73,6 +79,7 @@ type QcRelease struct {
 	Replicate            int32
 	TestDate             time.Time
 	Result               sql.NullString
+	CreatedBy            uuid.UUID
 }
 
 type Spec struct {

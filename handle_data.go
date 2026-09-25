@@ -6,18 +6,13 @@ import (
 	"time"
 
 	"github.com/Wayne_Francis/BatchBase/internal/database"
-	"github.com/google/uuid"
 )
 
-func handlerAddMaterial(s *state, cmd command) error {
+func handlerAddMaterial(s *state, cmd command, user database.User) error {
 	if len(cmd.Args) != 4 {
 		return fmt.Errorf("addmaterial requires 4 arguments")
 	}
 	materiallot := cmd.Args[0]
-	materiallot_uuid, err := uuid.Parse(materiallot)
-	if err != nil {
-		return fmt.Errorf("invalid UUID for material lot: %v", err)
-	}
 	materialtype := cmd.Args[1]
 	mfgdate := cmd.Args[2]
 	mfgdate_time, err := time.Parse("02/01/2006", mfgdate)
@@ -30,18 +25,19 @@ func handlerAddMaterial(s *state, cmd command) error {
 		return fmt.Errorf("invalid date format for exp date: %v", err)
 	}
 	_, err = s.db.AddRawMaterial(context.Background(), database.AddRawMaterialParams{
-		MaterialLot:  materiallot_uuid,
+		MaterialLot:  materiallot,
 		CreatedAt:    time.Now(),
 		UpdatedAt:    time.Now(),
 		MaterialType: materialtype,
 		MfgDate:      mfgdate_time,
 		ExpDate:      expdate_time,
+		CreatedBy:    user.ID,
 	})
 
 	if err != nil {
 		return err
 	}
-	fmt.Printf("new material added:\nlot: %v,\ntype: %v,\nmfg date: %v,\nexp date: %v\n", materiallot_uuid, materialtype, mfgdate_time, expdate_time)
+	fmt.Printf("new material added:\nlot: %v,\ntype: %v,\nmfg date: %v,\nexp date: %v\ncreated by: %v\n", materiallot, materialtype, mfgdate_time, expdate_time, user.ID)
 	return nil
 }
 
@@ -56,5 +52,17 @@ func handlerMaterials(s *state, cmd command) error {
 	for _, material := range materials {
 		fmt.Printf("Lot: %v\nType: %v\nMfg Date: %v\nExp Date: %v\n", material.MaterialLot, material.MaterialType, material.MfgDate, material.ExpDate)
 	}
+	return nil
+}
+
+func handlerResetMaterials(s *state, cmd command) error {
+	if len(cmd.Args) != 0 {
+		return fmt.Errorf("resetmaterials takes no arguments\n")
+	}
+	err := s.db.DeleteMaterials(context.Background())
+	if err != nil {
+		return err
+	}
+	fmt.Printf("Materials have been deleted\n")
 	return nil
 }

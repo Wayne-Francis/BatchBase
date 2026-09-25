@@ -13,25 +13,27 @@ import (
 )
 
 const addRawMaterial = `-- name: AddRawMaterial :one
-INSERT INTO materials (material_lot, created_at, updated_at, material_type, mfg_date, exp_date)
+INSERT INTO materials (material_lot, created_at, updated_at, material_type, mfg_date, exp_date, created_by)
 VALUES (
     $1,
     $2,
     $3,
     $4,
     $5,
-    $6
+    $6,
+    $7
 )
-RETURNING material_lot, created_at, updated_at, material_type, mfg_date, exp_date
+RETURNING material_lot, created_at, updated_at, material_type, mfg_date, exp_date, created_by
 `
 
 type AddRawMaterialParams struct {
-	MaterialLot  uuid.UUID
+	MaterialLot  string
 	CreatedAt    time.Time
 	UpdatedAt    time.Time
 	MaterialType string
 	MfgDate      time.Time
 	ExpDate      time.Time
+	CreatedBy    uuid.UUID
 }
 
 func (q *Queries) AddRawMaterial(ctx context.Context, arg AddRawMaterialParams) (Material, error) {
@@ -42,6 +44,7 @@ func (q *Queries) AddRawMaterial(ctx context.Context, arg AddRawMaterialParams) 
 		arg.MaterialType,
 		arg.MfgDate,
 		arg.ExpDate,
+		arg.CreatedBy,
 	)
 	var i Material
 	err := row.Scan(
@@ -51,17 +54,27 @@ func (q *Queries) AddRawMaterial(ctx context.Context, arg AddRawMaterialParams) 
 		&i.MaterialType,
 		&i.MfgDate,
 		&i.ExpDate,
+		&i.CreatedBy,
 	)
 	return i, err
 }
 
+const deleteMaterials = `-- name: DeleteMaterials :exec
+DELETE FROM materials
+`
+
+func (q *Queries) DeleteMaterials(ctx context.Context) error {
+	_, err := q.db.ExecContext(ctx, deleteMaterials)
+	return err
+}
+
 const getRawMaterialByLot = `-- name: GetRawMaterialByLot :one
-SELECT material_lot, created_at, updated_at, material_type, mfg_date, exp_date
+SELECT material_lot, created_at, updated_at, material_type, mfg_date, exp_date, created_by
 FROM materials
 WHERE material_lot = $1
 `
 
-func (q *Queries) GetRawMaterialByLot(ctx context.Context, materialLot uuid.UUID) (Material, error) {
+func (q *Queries) GetRawMaterialByLot(ctx context.Context, materialLot string) (Material, error) {
 	row := q.db.QueryRowContext(ctx, getRawMaterialByLot, materialLot)
 	var i Material
 	err := row.Scan(
@@ -71,12 +84,13 @@ func (q *Queries) GetRawMaterialByLot(ctx context.Context, materialLot uuid.UUID
 		&i.MaterialType,
 		&i.MfgDate,
 		&i.ExpDate,
+		&i.CreatedBy,
 	)
 	return i, err
 }
 
 const getRawMaterials = `-- name: GetRawMaterials :many
-SELECT material_lot, created_at, updated_at, material_type, mfg_date, exp_date
+SELECT material_lot, created_at, updated_at, material_type, mfg_date, exp_date, created_by
 FROM materials
 `
 
@@ -96,6 +110,7 @@ func (q *Queries) GetRawMaterials(ctx context.Context) ([]Material, error) {
 			&i.MaterialType,
 			&i.MfgDate,
 			&i.ExpDate,
+			&i.CreatedBy,
 		); err != nil {
 			return nil, err
 		}

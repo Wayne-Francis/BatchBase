@@ -30,8 +30,9 @@ func main() {
 	cmds.register("register", handlerRegister)
 	cmds.register("reset", handlerReset)
 	cmds.register("users", handlerUsers)
-	cmds.register("addmaterial", handlerAddMaterial)
+	cmds.register("addmaterial", middlewareLoggedIn(handlerAddMaterial))
 	cmds.register("materials", handlerMaterials)
+	cmds.register("resetmaterials", handlerResetMaterials)
 	args := os.Args
 	if len(args) < 2 {
 		log.Fatalf("please type commands")
