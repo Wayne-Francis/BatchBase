@@ -50,9 +50,9 @@ func handlerRegister(s *state, cmd command) error {
 	return nil
 }
 
-func handlerReset(s *state, cmd command) error {
+func handlerResetUsers(s *state, cmd command) error {
 	if len(cmd.Args) != 0 {
-		return fmt.Errorf("reset takes no arguments\n")
+		return fmt.Errorf("resetusers takes no arguments\n")
 	}
 	err := s.db.DeleteUsers(context.Background())
 	if err != nil {

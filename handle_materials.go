@@ -41,9 +41,9 @@ func handlerAddMaterial(s *state, cmd command, user database.User) error {
 	return nil
 }
 
-func handlerMaterials(s *state, cmd command) error {
+func handlerListMaterials(s *state, cmd command) error {
 	if len(cmd.Args) != 0 {
-		return fmt.Errorf("materials takes no arguments\n")
+		return fmt.Errorf("listmaterials takes no arguments\n")
 	}
 	materials, err := s.db.GetRawMaterials(context.Background())
 	if err != nil {
@@ -52,6 +52,19 @@ func handlerMaterials(s *state, cmd command) error {
 	for _, material := range materials {
 		fmt.Printf("Lot: %v\nType: %v\nMfg Date: %v\nExp Date: %v\n", material.MaterialLot, material.MaterialType, material.MfgDate, material.ExpDate)
 	}
+	return nil
+}
+
+func handlerSearchRawMaterialByLot(s *state, cmd command) error {
+	if len(cmd.Args) != 1 {
+		return fmt.Errorf("searchrawmaterialbylot takes 1 argument\n")
+	}
+	materialLot := cmd.Args[0]
+	material, err := s.db.GetRawMaterialByLot(context.Background(), materialLot)
+	if err != nil {
+		return err
+	}
+	fmt.Printf("Lot: %v\nType: %v\nMfg Date: %v\nExp Date: %v\n", material.MaterialLot, material.MaterialType, material.MfgDate, material.ExpDate)
 	return nil
 }
 

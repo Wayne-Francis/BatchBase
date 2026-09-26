@@ -12,8 +12,8 @@ import (
 )
 
 type Assembly struct {
-	InProcessBatchLot     uuid.UUID
-	FinishedProductBatch  uuid.UUID
+	InProcessBatchLot     string
+	FinishedProductBatch  string
 	CreatedAt             time.Time
 	UpdatedAt             time.Time
 	AssemblyStartDate     time.Time
@@ -23,7 +23,7 @@ type Assembly struct {
 }
 
 type BatchMaterialUsage struct {
-	InProcessBatchLot uuid.UUID
+	InProcessBatchLot string
 	MaterialLot       string
 	CreatedAt         time.Time
 	UpdatedAt         time.Time
@@ -31,7 +31,7 @@ type BatchMaterialUsage struct {
 }
 
 type Blend struct {
-	InProcessBatchLot         uuid.UUID
+	InProcessBatchLot         string
 	CreatedAt                 time.Time
 	UpdatedAt                 time.Time
 	BlendStartDate            time.Time
@@ -41,7 +41,7 @@ type Blend struct {
 }
 
 type Fill struct {
-	InProcessBatchLot        uuid.UUID
+	InProcessBatchLot        string
 	CreatedAt                time.Time
 	UpdatedAt                time.Time
 	FillStartDate            time.Time
@@ -51,7 +51,7 @@ type Fill struct {
 }
 
 type IpcQcResult struct {
-	InProcessBatchLot uuid.UUID
+	InProcessBatchLot string
 	CreatedAt         time.Time
 	UpdatedAt         time.Time
 	TestName          string
@@ -72,7 +72,7 @@ type Material struct {
 }
 
 type QcRelease struct {
-	FinishedProductBatch uuid.UUID
+	FinishedProductBatch string
 	CreatedAt            time.Time
 	UpdatedAt            time.Time
 	TestName             string

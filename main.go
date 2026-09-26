@@ -28,11 +28,17 @@ func main() {
 	}
 	cmds.register("login", handlerLogin)
 	cmds.register("register", handlerRegister)
-	cmds.register("reset", handlerReset)
+	cmds.register("resetusers", handlerResetUsers)
 	cmds.register("users", handlerUsers)
 	cmds.register("addmaterial", middlewareLoggedIn(handlerAddMaterial))
-	cmds.register("materials", handlerMaterials)
+	cmds.register("listmaterials", handlerListMaterials)
+	cmds.register("searchrawmaterialbylot", handlerSearchRawMaterialByLot)
 	cmds.register("resetmaterials", handlerResetMaterials)
+	cmds.register("addmaterialusage", middlewareLoggedIn(handlerAddMaterialUsage))
+	cmds.register("listmaterialusage", handlerListMaterialUsage)
+	cmds.register("searchmaterialusagebyipbatch", handlerSearchMaterialUsageByIPBatch)
+	cmds.register("searchmaterialusagebymateriallot", handlerSearchMaterialUsageByMaterialLot)
+	cmds.register("resetmaterialusage", handlerResetMaterialUsage)
 	args := os.Args
 	if len(args) < 2 {
 		log.Fatalf("please type commands")
