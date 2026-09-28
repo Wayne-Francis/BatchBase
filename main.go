@@ -39,6 +39,10 @@ func main() {
 	cmds.register("searchmaterialusagebyipbatch", handlerSearchMaterialUsageByIPBatch)
 	cmds.register("searchmaterialusagebymateriallot", handlerSearchMaterialUsageByMaterialLot)
 	cmds.register("resetmaterialusage", handlerResetMaterialUsage)
+	cmds.register("addblend", middlewareLoggedIn(handlerAddBlend))
+	cmds.register("listblends", handlerListBlends)
+	cmds.register("searchblendbyipbatch", handlerSearchBlendbyIPBatch)
+	cmds.register("resetblends", handlerResetBlend)
 	args := os.Args
 	if len(args) < 2 {
 		log.Fatalf("please type commands")
