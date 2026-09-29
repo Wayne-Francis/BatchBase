@@ -43,6 +43,10 @@ func main() {
 	cmds.register("listblends", handlerListBlends)
 	cmds.register("searchblendbyipbatch", handlerSearchBlendbyIPBatch)
 	cmds.register("resetblends", handlerResetBlend)
+	cmds.register("addfill", middlewareLoggedIn(handlerAddFill))
+	cmds.register("listfills", handlerListFills)
+	cmds.register("searchfillbyipbatch", handlerSearchFillbyIPBatch)
+	cmds.register("resetfills", handlerResetFill)
 	args := os.Args
 	if len(args) < 2 {
 		log.Fatalf("please type commands")
