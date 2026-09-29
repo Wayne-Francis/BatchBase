@@ -12,7 +12,6 @@ import (
 )
 
 type Assembly struct {
-	InProcessBatchLot     string
 	FinishedProductBatch  string
 	CreatedAt             time.Time
 	UpdatedAt             time.Time
@@ -48,6 +47,16 @@ type Fill struct {
 	FillEndDate              time.Time
 	InProcessDiscHoldEndDate sql.NullTime
 	CreatedBy                uuid.UUID
+}
+
+type FinishedProduct struct {
+	FinishedProductBatch string
+	InProcessBatchLot    string
+	Component1Batch      string
+	Component2Batch      string
+	CreatedAt            time.Time
+	UpdatedAt            time.Time
+	CreatedBy            uuid.UUID
 }
 
 type IpcQcResult struct {

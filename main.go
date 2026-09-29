@@ -47,6 +47,15 @@ func main() {
 	cmds.register("listfills", handlerListFills)
 	cmds.register("searchfillbyipbatch", handlerSearchFillbyIPBatch)
 	cmds.register("resetfills", handlerResetFill)
+	cmds.register("addfinishedproduct", middlewareLoggedIn(handlerAddfinishedproduct))
+	cmds.register("listfinishedproducts", handlerListFinishedProducts)
+	cmds.register("searchfinishedproductbyipbatch", handlerSearchFinishedProductByIPBatch)
+	cmds.register("resetfinishedproducts", handlerResetFinishedProducts)
+	cmds.register("addassembly", middlewareLoggedIn(handlerAddAssembly))
+	cmds.register("listassemblies", handlerListAssembly)
+	cmds.register("searchassemblybyfpbatch", handlerSearchAssemblyByFPBatch)
+	cmds.register("searchassemblybyipbatch", handlerSearchAssemblyByIPBatch)
+	cmds.register("resetassemblies", handlerResetAssembly)
 	args := os.Args
 	if len(args) < 2 {
 		log.Fatalf("please type commands")
