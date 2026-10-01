@@ -56,6 +56,11 @@ func main() {
 	cmds.register("searchassemblybyfpbatch", handlerSearchAssemblyByFPBatch)
 	cmds.register("searchassemblybyipbatch", handlerSearchAssemblyByIPBatch)
 	cmds.register("resetassemblies", handlerResetAssembly)
+	cmds.register("addipcqcresult", middlewareLoggedIn(handlerAddIPCQCResult))
+	cmds.register("listipcqcresults", handlerListIPCQCResults)
+	cmds.register("searchipcqcresultsbyipcbatch", GetIPCQCResultsByIPCBatch)
+	cmds.register("searchipcqcresultsbyfpbatch", GetIPCQCResultsByFPBatch)
+	cmds.register("resetipcqcresults", handlerResetIPCQCResult)
 	args := os.Args
 	if len(args) < 2 {
 		log.Fatalf("please type commands")
