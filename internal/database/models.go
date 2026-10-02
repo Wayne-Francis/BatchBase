@@ -98,6 +98,9 @@ type Spec struct {
 	MinResult sql.NullString
 	MaxResult sql.NullString
 	RsdLimit  sql.NullString
+	CreatedBy uuid.UUID
+	MeanMin   sql.NullString
+	MeanMax   sql.NullString
 }
 
 type User struct {
