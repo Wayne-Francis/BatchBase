@@ -57,6 +57,10 @@ WHERE finished_product_batch = $1;
 
 DELETE FROM finished_product;
 
+-- name: DeleteLotFromFinishedProducts :exec
+
+DELETE FROM finished_product
+WHERE finished_product_batch = $1;
 
 -- name: CheckIPBatchExistsInFill :one
 
@@ -65,3 +69,12 @@ SELECT EXISTS (
     FROM fill
     WHERE In_process_batch_lot = $1
 );
+
+-- name: CheckFPBatchExistsInAssembly :one
+
+SELECT EXISTS (
+    SELECT 1
+    FROM assembly
+    WHERE finished_product_batch = $1
+);
+

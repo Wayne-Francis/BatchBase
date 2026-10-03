@@ -61,6 +61,11 @@ SELECT EXISTS (
 
 DELETE FROM ipc_qc_results;
 
+-- name: DeleteIPCQCResultsForIPBatch :exec
+
+DELETE FROM ipc_qc_results
+WHERE In_process_batch_lot = $1;
+
 -- name: GetIPCQCResultsByFPBatch :many
 
 SELECT
@@ -74,3 +79,17 @@ FROM ipc_qc_results ipc
 JOIN finished_product fp
     ON ipc.In_process_batch_lot = fp.In_process_batch_lot
 WHERE fp.finished_product_batch = $1;
+
+-- name: CheckIPCBatchExistsInIPCQCResults :one
+
+SELECT EXISTS (
+    SELECT 1
+    FROM ipc_qc_results
+    WHERE In_process_batch_lot = $1
+);
+
+-- name: CountIPCQCResults :one
+SELECT COUNT(*)
+FROM ipc_qc_results
+WHERE In_process_batch_lot = $1
+AND test_name = $2;

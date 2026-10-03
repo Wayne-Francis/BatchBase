@@ -61,6 +61,11 @@ SELECT EXISTS (
     WHERE finished_product_batch = $1
 );
 
+-- name: DeleteFPBatchFromAssembly :exec
+
+DELETE FROM assembly
+WHERE finished_product_batch = $1;
+
 -- name: DeleteAllAssembly :exec
 
 DELETE FROM assembly;

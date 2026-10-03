@@ -87,6 +87,16 @@ func (q *Queries) DeleteAllBlend(ctx context.Context) error {
 	return err
 }
 
+const deleteIPFromBlend = `-- name: DeleteIPFromBlend :exec
+DELETE FROM blend
+WHERE In_process_batch_lot = $1
+`
+
+func (q *Queries) DeleteIPFromBlend(ctx context.Context, inProcessBatchLot string) error {
+	_, err := q.db.ExecContext(ctx, deleteIPFromBlend, inProcessBatchLot)
+	return err
+}
+
 const getBlendByIPBatch = `-- name: GetBlendByIPBatch :one
 SELECT
     In_process_batch_lot,

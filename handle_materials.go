@@ -79,3 +79,27 @@ func handlerResetMaterials(s *state, cmd command) error {
 	fmt.Printf("Materials have been deleted\n")
 	return nil
 }
+
+func handlerDeleteMaterialFromMaterials(s *state, cmd command) error {
+	if len(cmd.Args) != 1 {
+		return fmt.Errorf("delete material from materials takes 1 argument\n")
+	}
+
+	materialLot := cmd.Args[0]
+	usageExists, err := s.db.CheckMaterialLotExistsInMaterialUsage(context.Background(), materialLot)
+	if err != nil {
+		return fmt.Errorf("error checking material usage for material lot: %v", err)
+	}
+
+	if usageExists {
+		return fmt.Errorf("cannot delete material: material lot is being used in material usage: %v", materialLot)
+	}
+
+	err = s.db.DeleteMaterialFromMaterials(context.Background(), materialLot)
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("Material has been deleted from materials\n")
+	return nil
+}

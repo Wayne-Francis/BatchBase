@@ -42,6 +42,9 @@ SELECT
 FROM blend
 WHERE In_process_batch_lot = $1;
 
+-- name: DeleteIPFromBlend :exec
+DELETE FROM blend
+WHERE In_process_batch_lot = $1;
 
 -- name: DeleteAllBlend :exec
 DELETE FROM blend;

@@ -18,7 +18,15 @@ func handlerAddBlend(s *state, cmd command, user database.User) error {
 		return fmt.Errorf("error checking IP batch existence: %v", err)
 	}
 	if !exists {
-		return fmt.Errorf("IP batch lot does not exist: %v", inProcessBatchLot)
+		return fmt.Errorf("in-process batch lot does not exist in batch material usage: %v", inProcessBatchLot)
+	}
+	materialCount, err := s.db.CountMaterialUsageForIPBatch(context.Background(), inProcessBatchLot)
+	if err != nil {
+		return fmt.Errorf("error checking material usage count: %v", err)
+	}
+
+	if materialCount != 3 {
+		return fmt.Errorf("in-process batch lot must have 3 materials in material usage before blending: %v", inProcessBatchLot)
 	}
 	blendStartDate, err := time.Parse("02/01/2006", cmd.Args[1])
 	if err != nil {
@@ -80,5 +88,36 @@ func handlerResetBlend(s *state, cmd command) error {
 		return err
 	}
 	fmt.Printf("Blends have been deleted\n")
+	return nil
+}
+
+func DeleteLotFromBlend(s *state, cmd command) error {
+	if len(cmd.Args) != 1 {
+		return fmt.Errorf("delete lot from blend takes 1 argument\n")
+	}
+
+	inProcessBatchLot := cmd.Args[0]
+	fillExists, err := s.db.CheckIPBatchExistsInFill(context.Background(), inProcessBatchLot)
+	if err != nil {
+		return fmt.Errorf("error checking fill results for IP batch: %v", err)
+	}
+
+	if fillExists {
+		return fmt.Errorf("cannot delete in-process batch lot: fill results exist for in-process batch lot: %v", inProcessBatchLot)
+	}
+	ipcqcExists, err := s.db.CheckIPCBatchExistsInIPCQCResults(context.Background(), inProcessBatchLot)
+	if err != nil {
+		return fmt.Errorf("error checking IPC QC results for IP batch: %v", err)
+	}
+
+	if ipcqcExists {
+		return fmt.Errorf("cannot delete in-process batch lot: IPC QC results exist for in-process batch lot: %v", inProcessBatchLot)
+	}
+	err = s.db.DeleteIPFromBlend(context.Background(), inProcessBatchLot)
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("In-process batch lot has been deleted from blends\n")
 	return nil
 }

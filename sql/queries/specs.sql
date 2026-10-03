@@ -55,3 +55,7 @@ WHERE test_name = $1;
 
 -- name: DeleteAllSpecs :exec
 DELETE FROM specs;
+
+-- name: DeleteSpec :exec
+DELETE FROM specs
+WHERE test_name = $1;

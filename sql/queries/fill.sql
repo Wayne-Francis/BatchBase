@@ -46,9 +46,20 @@ WHERE In_process_batch_lot = $1;
 -- name: DeleteAllFill :exec
 DELETE FROM fill;
 
+-- name: DeleteIPFromFill :exec
+DELETE FROM fill
+WHERE In_process_batch_lot = $1;
+
 -- name: CheckIPBatchExistsInBlend :one
 SELECT EXISTS (
     SELECT 1
     FROM blend
+    WHERE In_process_batch_lot = $1
+);
+
+-- name: CheckIPBatchExistsInFinishedProducts :one
+SELECT EXISTS (
+    SELECT 1
+    FROM finished_product
     WHERE In_process_batch_lot = $1
 );

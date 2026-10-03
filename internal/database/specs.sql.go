@@ -88,6 +88,16 @@ func (q *Queries) DeleteAllSpecs(ctx context.Context) error {
 	return err
 }
 
+const deleteSpec = `-- name: DeleteSpec :exec
+DELETE FROM specs
+WHERE test_name = $1
+`
+
+func (q *Queries) DeleteSpec(ctx context.Context, testName string) error {
+	_, err := q.db.ExecContext(ctx, deleteSpec, testName)
+	return err
+}
+
 const getSpecs = `-- name: GetSpecs :many
 
 SELECT

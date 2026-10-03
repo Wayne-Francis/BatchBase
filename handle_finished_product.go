@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"time"
 
@@ -13,14 +14,36 @@ func handlerAddfinishedproduct(s *state, cmd command, user database.User) error 
 		return fmt.Errorf("addfinishedproduct requires 4 arguments")
 	}
 	inProcessBatchLot := cmd.Args[0]
-	exists, err := s.db.CheckIPBatchExistsInFill(context.Background(), inProcessBatchLot)
+
+	ipExists, err := s.db.CheckIPBatchExists(context.Background(), inProcessBatchLot)
 	if err != nil {
-		return fmt.Errorf("error checking IP batch fill: %v", err)
+		return fmt.Errorf("error checking IP batch existence: %v", err)
 	}
-	if !exists {
-		if !exists {
-			return fmt.Errorf("IP batch lot has not been filled: %v", inProcessBatchLot)
-		}
+	if !ipExists {
+		return fmt.Errorf("in-process batch lot does not exist in batch material usage: %v", inProcessBatchLot)
+	}
+
+	blendExists, err := s.db.CheckIPBatchExistsInBlend(context.Background(), inProcessBatchLot)
+	if err != nil {
+		return fmt.Errorf("error checking IP batch existence in blend: %v", err)
+	}
+	if !blendExists {
+		return fmt.Errorf("IP batch lot has not been blended: %v", inProcessBatchLot)
+	}
+
+	fillExists, err := s.db.CheckIPBatchExistsInFill(context.Background(), inProcessBatchLot)
+	if err != nil {
+		return fmt.Errorf("error checking IP batch existence in fill: %v", err)
+	}
+	if !fillExists {
+		return fmt.Errorf("IP batch lot has not been filled: %v", inProcessBatchLot)
+	}
+	_, err = s.db.GetFinishedProductByIPBatch(context.Background(), inProcessBatchLot)
+	if err != nil && err != sql.ErrNoRows {
+		return fmt.Errorf("error checking FP batch existence: %v", err)
+	}
+	if err == nil {
+		return fmt.Errorf("finished product for IP batch lot already exists: %v", inProcessBatchLot)
 	}
 	finishedProductBatch := cmd.Args[1]
 	component1Batch := cmd.Args[2]
@@ -78,5 +101,36 @@ func handlerResetFinishedProducts(s *state, cmd command) error {
 		return err
 	}
 	fmt.Printf("Finished products have been deleted\n")
+	return nil
+}
+
+func DeleteLotFromFinishedProduct(s *state, cmd command) error {
+	if len(cmd.Args) != 1 {
+		return fmt.Errorf("delete lot from finished product takes 1 argument\n")
+	}
+
+	finishedProductBatch := cmd.Args[0]
+	assemblyExists, err := s.db.CheckFPBatchExistsInAssembly(context.Background(), finishedProductBatch)
+	if err != nil {
+		return fmt.Errorf("error checking assembly results for FP batch: %v", err)
+	}
+
+	if assemblyExists {
+		return fmt.Errorf("cannot delete finished product batch: assembly results exist for finished product batch: %v", finishedProductBatch)
+	}
+	qcreleaseExists, err := s.db.CheckFPBatchExistsInQCRelease(context.Background(), finishedProductBatch)
+	if err != nil {
+		return fmt.Errorf("error checking QC release results for FP batch: %v", err)
+	}
+
+	if qcreleaseExists {
+		return fmt.Errorf("cannot delete finished product batch: QC release results exist for finished product batch: %v", finishedProductBatch)
+	}
+	err = s.db.DeleteLotFromFinishedProducts(context.Background(), finishedProductBatch)
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("Finished product batch has been deleted from finished products\n")
 	return nil
 }

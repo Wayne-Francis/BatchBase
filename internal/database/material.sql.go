@@ -59,6 +59,31 @@ func (q *Queries) AddRawMaterial(ctx context.Context, arg AddRawMaterialParams) 
 	return i, err
 }
 
+const checkMaterialLotExistsInMaterialUsage = `-- name: CheckMaterialLotExistsInMaterialUsage :one
+SELECT EXISTS (
+    SELECT 1
+    FROM batch_material_usage
+    WHERE material_lot = $1
+)
+`
+
+func (q *Queries) CheckMaterialLotExistsInMaterialUsage(ctx context.Context, materialLot string) (bool, error) {
+	row := q.db.QueryRowContext(ctx, checkMaterialLotExistsInMaterialUsage, materialLot)
+	var exists bool
+	err := row.Scan(&exists)
+	return exists, err
+}
+
+const deleteMaterialFromMaterials = `-- name: DeleteMaterialFromMaterials :exec
+DELETE FROM materials
+WHERE material_lot = $1
+`
+
+func (q *Queries) DeleteMaterialFromMaterials(ctx context.Context, materialLot string) error {
+	_, err := q.db.ExecContext(ctx, deleteMaterialFromMaterials, materialLot)
+	return err
+}
+
 const deleteMaterials = `-- name: DeleteMaterials :exec
 DELETE FROM materials
 `

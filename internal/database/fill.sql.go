@@ -78,12 +78,37 @@ func (q *Queries) CheckIPBatchExistsInBlend(ctx context.Context, inProcessBatchL
 	return exists, err
 }
 
+const checkIPBatchExistsInFinishedProducts = `-- name: CheckIPBatchExistsInFinishedProducts :one
+SELECT EXISTS (
+    SELECT 1
+    FROM finished_product
+    WHERE In_process_batch_lot = $1
+)
+`
+
+func (q *Queries) CheckIPBatchExistsInFinishedProducts(ctx context.Context, inProcessBatchLot string) (bool, error) {
+	row := q.db.QueryRowContext(ctx, checkIPBatchExistsInFinishedProducts, inProcessBatchLot)
+	var exists bool
+	err := row.Scan(&exists)
+	return exists, err
+}
+
 const deleteAllFill = `-- name: DeleteAllFill :exec
 DELETE FROM fill
 `
 
 func (q *Queries) DeleteAllFill(ctx context.Context) error {
 	_, err := q.db.ExecContext(ctx, deleteAllFill)
+	return err
+}
+
+const deleteIPFromFill = `-- name: DeleteIPFromFill :exec
+DELETE FROM fill
+WHERE In_process_batch_lot = $1
+`
+
+func (q *Queries) DeleteIPFromFill(ctx context.Context, inProcessBatchLot string) error {
+	_, err := q.db.ExecContext(ctx, deleteIPFromFill, inProcessBatchLot)
 	return err
 }
 

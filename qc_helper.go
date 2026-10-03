@@ -5,14 +5,12 @@ type QCResult struct {
 	Result    float64
 }
 
-func addMultipleQCResults(results []float64) []QCResult {
+func addMultipleQCResults(results []float64, startingReplicate int) []QCResult {
 	qcResults := []QCResult{}
 
 	for i, result := range results {
-		replicate := i + 1
-
 		qcResults = append(qcResults, QCResult{
-			Replicate: replicate,
+			Replicate: startingReplicate + i,
 			Result:    result,
 		})
 	}

@@ -90,6 +90,41 @@ func (q *Queries) CheckIPCBatchExists(ctx context.Context, inProcessBatchLot str
 	return exists, err
 }
 
+const checkIPCBatchExistsInIPCQCResults = `-- name: CheckIPCBatchExistsInIPCQCResults :one
+
+SELECT EXISTS (
+    SELECT 1
+    FROM ipc_qc_results
+    WHERE In_process_batch_lot = $1
+)
+`
+
+func (q *Queries) CheckIPCBatchExistsInIPCQCResults(ctx context.Context, inProcessBatchLot string) (bool, error) {
+	row := q.db.QueryRowContext(ctx, checkIPCBatchExistsInIPCQCResults, inProcessBatchLot)
+	var exists bool
+	err := row.Scan(&exists)
+	return exists, err
+}
+
+const countIPCQCResults = `-- name: CountIPCQCResults :one
+SELECT COUNT(*)
+FROM ipc_qc_results
+WHERE In_process_batch_lot = $1
+AND test_name = $2
+`
+
+type CountIPCQCResultsParams struct {
+	InProcessBatchLot string
+	TestName          string
+}
+
+func (q *Queries) CountIPCQCResults(ctx context.Context, arg CountIPCQCResultsParams) (int64, error) {
+	row := q.db.QueryRowContext(ctx, countIPCQCResults, arg.InProcessBatchLot, arg.TestName)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const deleteAllIPCQCResults = `-- name: DeleteAllIPCQCResults :exec
 
 DELETE FROM ipc_qc_results
@@ -97,6 +132,17 @@ DELETE FROM ipc_qc_results
 
 func (q *Queries) DeleteAllIPCQCResults(ctx context.Context) error {
 	_, err := q.db.ExecContext(ctx, deleteAllIPCQCResults)
+	return err
+}
+
+const deleteIPCQCResultsForIPBatch = `-- name: DeleteIPCQCResultsForIPBatch :exec
+
+DELETE FROM ipc_qc_results
+WHERE In_process_batch_lot = $1
+`
+
+func (q *Queries) DeleteIPCQCResultsForIPBatch(ctx context.Context, inProcessBatchLot string) error {
+	_, err := q.db.ExecContext(ctx, deleteIPCQCResultsForIPBatch, inProcessBatchLot)
 	return err
 }
 

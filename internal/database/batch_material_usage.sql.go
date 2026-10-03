@@ -58,6 +58,19 @@ func (q *Queries) AddMaterialUsage(ctx context.Context, arg AddMaterialUsagePara
 	return i, err
 }
 
+const countMaterialUsageForIPBatch = `-- name: CountMaterialUsageForIPBatch :one
+SELECT COUNT(*)
+FROM batch_material_usage
+WHERE In_process_batch_lot = $1
+`
+
+func (q *Queries) CountMaterialUsageForIPBatch(ctx context.Context, inProcessBatchLot string) (int64, error) {
+	row := q.db.QueryRowContext(ctx, countMaterialUsageForIPBatch, inProcessBatchLot)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const deleteAllMaterialUsage = `-- name: DeleteAllMaterialUsage :exec
 
 DELETE FROM batch_material_usage
@@ -65,6 +78,16 @@ DELETE FROM batch_material_usage
 
 func (q *Queries) DeleteAllMaterialUsage(ctx context.Context) error {
 	_, err := q.db.ExecContext(ctx, deleteAllMaterialUsage)
+	return err
+}
+
+const deleteMaterialFromUsage = `-- name: DeleteMaterialFromUsage :exec
+DELETE FROM batch_material_usage
+WHERE In_process_batch_lot = $1
+`
+
+func (q *Queries) DeleteMaterialFromUsage(ctx context.Context, inProcessBatchLot string) error {
+	_, err := q.db.ExecContext(ctx, deleteMaterialFromUsage, inProcessBatchLot)
 	return err
 }
 

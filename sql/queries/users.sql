@@ -24,3 +24,7 @@ FROM users;
 SELECT id, created_at, updated_at, name
 FROM users
 WHERE id = $1;
+
+-- name: DeleteUserById :exec
+DELETE FROM users
+WHERE id = $1;

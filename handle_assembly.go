@@ -149,3 +149,27 @@ func handlerResetAssembly(s *state, cmd command) error {
 	fmt.Printf("Assembly has been deleted\n")
 	return nil
 }
+
+func handlerDeleteFPBatchFromAssembly(s *state, cmd command) error {
+	if len(cmd.Args) != 1 {
+		return fmt.Errorf("deletefpbatchfromassembly takes 1 argument\n")
+	}
+
+	finishedProductBatch := cmd.Args[0]
+	exists, err := s.db.CheckFPBatchExistsInQCRelease(context.Background(), finishedProductBatch)
+	if err != nil {
+		return fmt.Errorf("error checking QC release results for FP batch: %v", err)
+	}
+
+	if exists {
+		return fmt.Errorf("cannot delete assembly: QC release results exist for finished product batch: %v", finishedProductBatch)
+	}
+
+	err = s.db.DeleteFPBatchFromAssembly(context.Background(), finishedProductBatch)
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("Finished product batch has been deleted from assembly\n")
+	return nil
+}

@@ -91,6 +91,17 @@ func (q *Queries) DeleteAllAssembly(ctx context.Context) error {
 	return err
 }
 
+const deleteFPBatchFromAssembly = `-- name: DeleteFPBatchFromAssembly :exec
+
+DELETE FROM assembly
+WHERE finished_product_batch = $1
+`
+
+func (q *Queries) DeleteFPBatchFromAssembly(ctx context.Context, finishedProductBatch string) error {
+	_, err := q.db.ExecContext(ctx, deleteFPBatchFromAssembly, finishedProductBatch)
+	return err
+}
+
 const getAssembly = `-- name: GetAssembly :many
 
 SELECT

@@ -22,3 +22,14 @@ WHERE material_lot = $1;
 
 -- name: DeleteMaterials :exec
 DELETE FROM materials;
+
+-- name: DeleteMaterialFromMaterials :exec
+DELETE FROM materials
+WHERE material_lot = $1;
+
+-- name: CheckMaterialLotExistsInMaterialUsage :one
+SELECT EXISTS (
+    SELECT 1
+    FROM batch_material_usage
+    WHERE material_lot = $1
+);

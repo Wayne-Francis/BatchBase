@@ -90,6 +90,40 @@ func (q *Queries) CheckFPBatchExists(ctx context.Context, finishedProductBatch s
 	return exists, err
 }
 
+const checkFPBatchExistsInQCRelease = `-- name: CheckFPBatchExistsInQCRelease :one
+SELECT EXISTS (
+    SELECT 1
+    FROM qc_release
+    WHERE finished_product_batch = $1
+)
+`
+
+func (q *Queries) CheckFPBatchExistsInQCRelease(ctx context.Context, finishedProductBatch string) (bool, error) {
+	row := q.db.QueryRowContext(ctx, checkFPBatchExistsInQCRelease, finishedProductBatch)
+	var exists bool
+	err := row.Scan(&exists)
+	return exists, err
+}
+
+const countQCReleaseResults = `-- name: CountQCReleaseResults :one
+SELECT COUNT(*)
+FROM qc_release
+WHERE finished_product_batch = $1
+AND test_name = $2
+`
+
+type CountQCReleaseResultsParams struct {
+	FinishedProductBatch string
+	TestName             string
+}
+
+func (q *Queries) CountQCReleaseResults(ctx context.Context, arg CountQCReleaseResultsParams) (int64, error) {
+	row := q.db.QueryRowContext(ctx, countQCReleaseResults, arg.FinishedProductBatch, arg.TestName)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const deleteAllQCReleaseResults = `-- name: DeleteAllQCReleaseResults :exec
 
 DELETE FROM qc_release
@@ -97,6 +131,17 @@ DELETE FROM qc_release
 
 func (q *Queries) DeleteAllQCReleaseResults(ctx context.Context) error {
 	_, err := q.db.ExecContext(ctx, deleteAllQCReleaseResults)
+	return err
+}
+
+const deleteQCReleaseResultsForFPBatch = `-- name: DeleteQCReleaseResultsForFPBatch :exec
+
+DELETE FROM qc_release
+WHERE finished_product_batch = $1
+`
+
+func (q *Queries) DeleteQCReleaseResultsForFPBatch(ctx context.Context, finishedProductBatch string) error {
+	_, err := q.db.ExecContext(ctx, deleteQCReleaseResultsForFPBatch, finishedProductBatch)
 	return err
 }
 

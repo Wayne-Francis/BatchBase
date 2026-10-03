@@ -15,17 +15,16 @@ func AddQCReleaseResults(s *state, cmd command, user database.User) error {
 		return fmt.Errorf("addqcreleaseresults requires a batch, test, date and at least one result")
 	}
 
-	FinishedProductBatch := cmd.Args[0]
+	finishedProductBatch := cmd.Args[0]
 
-	exists, err := s.db.CheckFPBatchExists(context.Background(), FinishedProductBatch)
+	exists, err := s.db.CheckFPBatchExists(context.Background(), finishedProductBatch)
 	if err != nil {
 		return fmt.Errorf("error checking FP batch existence: %v", err)
 	}
 
 	if !exists {
-		return fmt.Errorf("finished product batch has not been assembled: %v", FinishedProductBatch)
+		return fmt.Errorf("finished product batch does not exist or has not been assembled: %v", finishedProductBatch)
 	}
-
 	testName := cmd.Args[1]
 
 	testDate, err := time.Parse("02/01/2006", cmd.Args[2])
@@ -34,7 +33,6 @@ func AddQCReleaseResults(s *state, cmd command, user database.User) error {
 	}
 
 	results := cmd.Args[3:]
-
 	floatResults := []float64{}
 
 	for _, result := range results {
@@ -46,13 +44,24 @@ func AddQCReleaseResults(s *state, cmd command, user database.User) error {
 		floatResults = append(floatResults, value)
 	}
 
-	qcResults := addMultipleQCResults(floatResults)
+	existingResults, err := s.db.CountQCReleaseResults(
+		context.Background(),
+		database.CountQCReleaseResultsParams{
+			FinishedProductBatch: finishedProductBatch,
+			TestName:             testName,
+		},
+	)
+	if err != nil {
+		return fmt.Errorf("error checking existing QC release results: %v", err)
+	}
+
+	qcResults := addMultipleQCResults(floatResults, int(existingResults)+1)
 
 	now := time.Now()
 
 	for _, qcResult := range qcResults {
 		_, err = s.db.AddQCReleaseResults(context.Background(), database.AddQCReleaseResultsParams{
-			FinishedProductBatch: FinishedProductBatch,
+			FinishedProductBatch: finishedProductBatch,
 			CreatedAt:            now,
 			UpdatedAt:            now,
 			TestName:             testName,
@@ -72,7 +81,7 @@ func AddQCReleaseResults(s *state, cmd command, user database.User) error {
 
 	fmt.Printf(
 		"QC release results added:\nFinished product batch: %v\nTest name: %v\nReplicates added: %v\nTest date: %v\nCreated by: %v\n",
-		FinishedProductBatch,
+		finishedProductBatch,
 		testName,
 		len(qcResults),
 		testDate,
@@ -80,6 +89,7 @@ func AddQCReleaseResults(s *state, cmd command, user database.User) error {
 	)
 
 	return nil
+
 }
 
 func handlerListQCReleaseResults(s *state, cmd command) error {
@@ -175,5 +185,21 @@ func handlerResetQCReleaseResult(s *state, cmd command) error {
 	}
 
 	fmt.Printf("QC release results have been reset\n")
+	return nil
+}
+
+func handlerDeleteQCReleaseResult(s *state, cmd command) error {
+	if len(cmd.Args) != 1 {
+		return fmt.Errorf("deleteqcreleaseresult takes 1 argument\n")
+	}
+
+	finishedProductBatch := cmd.Args[0]
+
+	err := s.db.DeleteQCReleaseResultsForFPBatch(context.Background(), finishedProductBatch)
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("QC release results have been deleted\n")
 	return nil
 }

@@ -18,7 +18,7 @@ func handlerAddFill(s *state, cmd command, user database.User) error {
 		return fmt.Errorf("error checking IP batch existence: %v", err)
 	}
 	if !exists {
-		return fmt.Errorf("IP batch lot has not been blended: %v", inProcessBatchLot)
+		return fmt.Errorf("IP batch lot does not exist or has not been blended: %v", inProcessBatchLot)
 	}
 	fillStartDate, err := time.Parse("02/01/2006", cmd.Args[1])
 	if err != nil {
@@ -80,5 +80,28 @@ func handlerResetFill(s *state, cmd command) error {
 		return err
 	}
 	fmt.Printf("Fills have been deleted\n")
+	return nil
+}
+
+func DeleteLotFromFill(s *state, cmd command) error {
+	if len(cmd.Args) != 1 {
+		return fmt.Errorf("delete lot from fill takes 1 argument\n")
+	}
+
+	inProcessBatchLot := cmd.Args[0]
+	finishedproductExists, err := s.db.CheckIPBatchExistsInFinishedProducts(context.Background(), inProcessBatchLot)
+	if err != nil {
+		return fmt.Errorf("error checking finished product for IP batch: %v", err)
+	}
+
+	if finishedproductExists {
+		return fmt.Errorf("cannot delete in-process batch lot: finished product results exist for in-process batch lot: %v", inProcessBatchLot)
+	}
+	err = s.db.DeleteIPFromFill(context.Background(), inProcessBatchLot)
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("In-process batch lot has been deleted from fills\n")
 	return nil
 }

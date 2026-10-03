@@ -41,7 +41,15 @@ SELECT *
 FROM batch_material_usage
 WHERE material_lot = $1;
 
+-- name: DeleteMaterialFromUsage :exec
+DELETE FROM batch_material_usage
+WHERE In_process_batch_lot = $1;
 
 -- name: DeleteAllMaterialUsage :exec
 
 DELETE FROM batch_material_usage;
+
+-- name: CountMaterialUsageForIPBatch :one
+SELECT COUNT(*)
+FROM batch_material_usage
+WHERE In_process_batch_lot = $1;

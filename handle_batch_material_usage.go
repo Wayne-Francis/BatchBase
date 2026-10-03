@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/Wayne_Francis/BatchBase/internal/database"
+	"github.com/lib/pq"
 )
 
 func handlerAddMaterialUsage(s *state, cmd command, user database.User) error {
@@ -23,6 +24,9 @@ func handlerAddMaterialUsage(s *state, cmd command, user database.User) error {
 	})
 
 	if err != nil {
+		if pqErr, ok := err.(*pq.Error); ok && pqErr.Code == "23503" {
+			return fmt.Errorf("material lot does not exist: %v", materialLot)
+		}
 		return err
 	}
 	fmt.Printf("new material usage added:\nIn-process batch lot: %v,\nMaterial lot: %v,\ncreated at: %v,\nupdated at: %v\ncreated by: %v\n", inProcessBatchLot, materialLot, time.Now(), time.Now(), user.ID)
@@ -83,5 +87,28 @@ func handlerResetMaterialUsage(s *state, cmd command) error {
 		return err
 	}
 	fmt.Printf("Material usage have been deleted\n")
+	return nil
+}
+
+func DeleteMaterialFromUsage(s *state, cmd command) error {
+	if len(cmd.Args) != 1 {
+		return fmt.Errorf("delete lot from material usage takes 1 argument\n")
+	}
+
+	inProcessBatchLot := cmd.Args[0]
+	blendExists, err := s.db.CheckIPBatchExistsInBlend(context.Background(), inProcessBatchLot)
+	if err != nil {
+		return fmt.Errorf("error checking blend for IP batch: %v", err)
+	}
+
+	if blendExists {
+		return fmt.Errorf("cannot delete in-process batch lot: blend results exist for in-process batch lot: %v", inProcessBatchLot)
+	}
+	err = s.db.DeleteMaterialFromUsage(context.Background(), inProcessBatchLot)
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("In-process batch lot has been deleted from Material Usage\n")
 	return nil
 }

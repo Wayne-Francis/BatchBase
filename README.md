@@ -34,7 +34,6 @@ BatchBase will use:
 -PostgreSQL
 -sqlc
 -Goose
-
 ## Project Status
 
 Currently in development.

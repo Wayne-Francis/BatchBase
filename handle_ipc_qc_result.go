@@ -15,15 +15,15 @@ func handlerAddIPCQCResult(s *state, cmd command, user database.User) error {
 		return fmt.Errorf("addipcqcresult requires a batch, test, date and at least one result")
 	}
 
-	InProcessBatchLot := cmd.Args[0]
+	inProcessBatchLot := cmd.Args[0]
 
-	exists, err := s.db.CheckIPCBatchExists(context.Background(), InProcessBatchLot)
+	exists, err := s.db.CheckIPCBatchExists(context.Background(), inProcessBatchLot)
 	if err != nil {
 		return fmt.Errorf("error checking IPC batch existence: %v", err)
 	}
 
 	if !exists {
-		return fmt.Errorf("in-process batch lot has not been blended: %v", InProcessBatchLot)
+		return fmt.Errorf("in-process batch lot does not exist or has not been blended: %v", inProcessBatchLot)
 	}
 
 	testName := cmd.Args[1]
@@ -34,7 +34,6 @@ func handlerAddIPCQCResult(s *state, cmd command, user database.User) error {
 	}
 
 	results := cmd.Args[3:]
-
 	floatResults := []float64{}
 
 	for _, result := range results {
@@ -46,13 +45,24 @@ func handlerAddIPCQCResult(s *state, cmd command, user database.User) error {
 		floatResults = append(floatResults, value)
 	}
 
-	qcResults := addMultipleQCResults(floatResults)
+	existingResults, err := s.db.CountIPCQCResults(
+		context.Background(),
+		database.CountIPCQCResultsParams{
+			InProcessBatchLot: inProcessBatchLot,
+			TestName:          testName,
+		},
+	)
+	if err != nil {
+		return fmt.Errorf("error checking existing IPC QC results: %v", err)
+	}
+
+	qcResults := addMultipleQCResults(floatResults, int(existingResults)+1)
 
 	now := time.Now()
 
 	for _, qcResult := range qcResults {
 		_, err = s.db.AddIPCQCResults(context.Background(), database.AddIPCQCResultsParams{
-			InProcessBatchLot: InProcessBatchLot,
+			InProcessBatchLot: inProcessBatchLot,
 			CreatedAt:         now,
 			UpdatedAt:         now,
 			TestName:          testName,
@@ -72,7 +82,7 @@ func handlerAddIPCQCResult(s *state, cmd command, user database.User) error {
 
 	fmt.Printf(
 		"IPC QC results added:\nIn-process batch lot: %v\nTest name: %v\nReplicates added: %v\nTest date: %v\nCreated by: %v\n",
-		InProcessBatchLot,
+		inProcessBatchLot,
 		testName,
 		len(qcResults),
 		testDate,
@@ -176,5 +186,21 @@ func handlerResetIPCQCResult(s *state, cmd command) error {
 	}
 
 	fmt.Printf("IPC QC results have been reset\n")
+	return nil
+}
+
+func handlerDeleteIPCQCResult(s *state, cmd command) error {
+	if len(cmd.Args) != 1 {
+		return fmt.Errorf("deleteipcqcresult takes 1 argument\n")
+	}
+
+	inProcessBatchLot := cmd.Args[0]
+
+	err := s.db.DeleteIPCQCResultsForIPBatch(context.Background(), inProcessBatchLot)
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("IPC QC results have been deleted\n")
 	return nil
 }

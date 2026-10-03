@@ -61,6 +61,11 @@ SELECT EXISTS (
 
 DELETE FROM qc_release;
 
+-- name: DeleteQCReleaseResultsForFPBatch :exec
+
+DELETE FROM qc_release
+WHERE finished_product_batch = $1;
+
 -- name: GetQCReleaseResultsByIPBatch :many
 
 SELECT
@@ -75,3 +80,15 @@ JOIN finished_product fp
     ON fp.finished_product_batch = qr.finished_product_batch
 WHERE fp.In_process_batch_lot = $1;
 
+-- name: CheckFPBatchExistsInQCRelease :one
+SELECT EXISTS (
+    SELECT 1
+    FROM qc_release
+    WHERE finished_product_batch = $1
+);
+
+-- name: CountQCReleaseResults :one
+SELECT COUNT(*)
+FROM qc_release
+WHERE finished_product_batch = $1
+AND test_name = $2;

@@ -68,6 +68,22 @@ func (q *Queries) AddFinishedProduct(ctx context.Context, arg AddFinishedProduct
 	return i, err
 }
 
+const checkFPBatchExistsInAssembly = `-- name: CheckFPBatchExistsInAssembly :one
+
+SELECT EXISTS (
+    SELECT 1
+    FROM assembly
+    WHERE finished_product_batch = $1
+)
+`
+
+func (q *Queries) CheckFPBatchExistsInAssembly(ctx context.Context, finishedProductBatch string) (bool, error) {
+	row := q.db.QueryRowContext(ctx, checkFPBatchExistsInAssembly, finishedProductBatch)
+	var exists bool
+	err := row.Scan(&exists)
+	return exists, err
+}
+
 const checkIPBatchExistsInFill = `-- name: CheckIPBatchExistsInFill :one
 
 SELECT EXISTS (
@@ -91,6 +107,17 @@ DELETE FROM finished_product
 
 func (q *Queries) DeleteAllFinishedProducts(ctx context.Context) error {
 	_, err := q.db.ExecContext(ctx, deleteAllFinishedProducts)
+	return err
+}
+
+const deleteLotFromFinishedProducts = `-- name: DeleteLotFromFinishedProducts :exec
+
+DELETE FROM finished_product
+WHERE finished_product_batch = $1
+`
+
+func (q *Queries) DeleteLotFromFinishedProducts(ctx context.Context, finishedProductBatch string) error {
+	_, err := q.db.ExecContext(ctx, deleteLotFromFinishedProducts, finishedProductBatch)
 	return err
 }
 
