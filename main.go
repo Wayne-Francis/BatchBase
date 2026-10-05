@@ -106,6 +106,10 @@ func main() {
 	cmds.register("resetspecs", handlerResetSpecs)
 	cmds.register("deletespecs", handlerDeleteSpecs)
 
+	// Batch History
+	cmds.register("materialhistory", handlerMaterialHistory)
+	cmds.register("batchstatus", handlerBatchStatus)
+
 	args := os.Args
 
 	if len(args) < 2 {
