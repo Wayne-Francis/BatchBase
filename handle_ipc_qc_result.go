@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"database/sql"
 	"fmt"
 	"strconv"
 	"time"
@@ -68,11 +67,8 @@ func handlerAddIPCQCResult(s *state, cmd command, user database.User) error {
 			TestName:          testName,
 			Replicate:         int32(qcResult.Replicate),
 			TestDate:          testDate,
-			Result: sql.NullString{
-				String: strconv.FormatFloat(qcResult.Result, 'f', 2, 64),
-				Valid:  true,
-			},
-			CreatedBy: user.ID,
+			Result:            strconv.FormatFloat(qcResult.Result, 'f', 2, 64),
+			CreatedBy:         user.ID,
 		})
 
 		if err != nil {

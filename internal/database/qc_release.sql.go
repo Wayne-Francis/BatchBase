@@ -7,7 +7,6 @@ package database
 
 import (
 	"context"
-	"database/sql"
 	"time"
 
 	"github.com/google/uuid"
@@ -45,7 +44,7 @@ type AddQCReleaseResultsParams struct {
 	TestName             string
 	Replicate            int32
 	TestDate             time.Time
-	Result               sql.NullString
+	Result               string
 	CreatedBy            uuid.UUID
 }
 
@@ -165,7 +164,7 @@ type GetAllQCReleaseResultsRow struct {
 	TestName             string
 	Replicate            int32
 	TestDate             time.Time
-	Result               sql.NullString
+	Result               string
 }
 
 func (q *Queries) GetAllQCReleaseResults(ctx context.Context) ([]GetAllQCReleaseResultsRow, error) {
@@ -220,7 +219,7 @@ type GetQCReleaseResultsByFPBatchRow struct {
 	TestName             string
 	Replicate            int32
 	TestDate             time.Time
-	Result               sql.NullString
+	Result               string
 }
 
 func (q *Queries) GetQCReleaseResultsByFPBatch(ctx context.Context, finishedProductBatch string) ([]GetQCReleaseResultsByFPBatchRow, error) {
@@ -275,7 +274,7 @@ type GetQCReleaseResultsByIPBatchRow struct {
 	TestName             string
 	Replicate            int32
 	TestDate             time.Time
-	Result               sql.NullString
+	Result               string
 }
 
 func (q *Queries) GetQCReleaseResultsByIPBatch(ctx context.Context, inProcessBatchLot string) ([]GetQCReleaseResultsByIPBatchRow, error) {

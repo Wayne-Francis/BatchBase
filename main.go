@@ -104,6 +104,7 @@ func main() {
 	cmds.register("listspecs", handlerListSpecs)
 	cmds.register("searchspecsbytestname", handlerSearchSpecsByTestName)
 	cmds.register("resetspecs", handlerResetSpecs)
+	cmds.register("deletespecs", handlerDeleteSpecs)
 
 	args := os.Args
 

@@ -11,8 +11,8 @@ import (
 )
 
 func handlerAddSpecs(s *state, cmd command, user database.User) error {
-	if len(cmd.Args) != 6 {
-		return fmt.Errorf("addspecs requires 6 arguments")
+	if len(cmd.Args) != 3 && len(cmd.Args) != 6 {
+		return fmt.Errorf("addspecs requires 3 or 6 arguments")
 	}
 
 	testName := cmd.Args[0]
@@ -27,19 +27,29 @@ func handlerAddSpecs(s *state, cmd command, user database.User) error {
 		return fmt.Errorf("invalid max result: %v", err)
 	}
 
-	meanMin, err := strconv.ParseFloat(cmd.Args[3], 64)
-	if err != nil {
-		return fmt.Errorf("invalid mean min: %v", err)
-	}
+	var meanMin sql.NullString
+	var meanMax sql.NullString
+	var rsdLimit sql.NullString
 
-	meanMax, err := strconv.ParseFloat(cmd.Args[4], 64)
-	if err != nil {
-		return fmt.Errorf("invalid mean max: %v", err)
-	}
+	if len(cmd.Args) == 6 {
+		meanMinValue, err := strconv.ParseFloat(cmd.Args[3], 64)
+		if err != nil {
+			return fmt.Errorf("invalid mean min: %v", err)
+		}
 
-	rsdLimit, err := strconv.ParseFloat(cmd.Args[5], 64)
-	if err != nil {
-		return fmt.Errorf("invalid rsd limit: %v", err)
+		meanMaxValue, err := strconv.ParseFloat(cmd.Args[4], 64)
+		if err != nil {
+			return fmt.Errorf("invalid mean max: %v", err)
+		}
+
+		rsdLimitValue, err := strconv.ParseFloat(cmd.Args[5], 64)
+		if err != nil {
+			return fmt.Errorf("invalid rsd limit: %v", err)
+		}
+
+		meanMin = toNullString(meanMinValue)
+		meanMax = toNullString(meanMaxValue)
+		rsdLimit = toNullString(rsdLimitValue)
 	}
 
 	now := time.Now()
@@ -48,9 +58,9 @@ func handlerAddSpecs(s *state, cmd command, user database.User) error {
 		TestName:  testName,
 		MinResult: toNullString(minResult),
 		MaxResult: toNullString(maxResult),
-		MeanMin:   toNullString(meanMin),
-		MeanMax:   toNullString(meanMax),
-		RsdLimit:  toNullString(rsdLimit),
+		MeanMin:   meanMin,
+		MeanMax:   meanMax,
+		RsdLimit:  rsdLimit,
 		CreatedAt: now,
 		UpdatedAt: now,
 		CreatedBy: user.ID,
@@ -64,9 +74,9 @@ func handlerAddSpecs(s *state, cmd command, user database.User) error {
 		testName,
 		minResult,
 		maxResult,
-		meanMin,
-		meanMax,
-		rsdLimit,
+		formatNullableResult(meanMin),
+		formatNullableResult(meanMax),
+		formatNullableResult(rsdLimit),
 		now,
 		now,
 		user.ID,
@@ -89,11 +99,11 @@ func handlerListSpecs(s *state, cmd command) error {
 		fmt.Printf(
 			"Test Name: %v\nMin Result: %v\nMax Result: %v\nMean Min: %v\nMean Max: %v\nRSD Limit: %v\nCreated At: %v\nUpdated At: %v\nCreated By: %v\n\n",
 			spec.TestName,
-			spec.MinResult.String,
-			spec.MaxResult.String,
-			spec.MeanMin.String,
-			spec.MeanMax.String,
-			spec.RsdLimit.String,
+			formatNullableResult(spec.MinResult),
+			formatNullableResult(spec.MaxResult),
+			formatNullableResult(spec.MeanMin),
+			formatNullableResult(spec.MeanMax),
+			formatNullableResult(spec.RsdLimit),
 			spec.CreatedAt,
 			spec.UpdatedAt,
 			spec.CreatedBy,
@@ -118,11 +128,11 @@ func handlerSearchSpecsByTestName(s *state, cmd command) error {
 	fmt.Printf(
 		"Test Name: %v\nMin Result: %v\nMax Result: %v\nMean Min: %v\nMean Max: %v\nRSD Limit: %v\nCreated At: %v\nUpdated At: %v\nCreated By: %v\n",
 		spec.TestName,
-		spec.MinResult.String,
-		spec.MaxResult.String,
-		spec.MeanMin.String,
-		spec.MeanMax.String,
-		spec.RsdLimit.String,
+		formatNullableResult(spec.MinResult),
+		formatNullableResult(spec.MaxResult),
+		formatNullableResult(spec.MeanMin),
+		formatNullableResult(spec.MeanMax),
+		formatNullableResult(spec.RsdLimit),
 		spec.CreatedAt,
 		spec.UpdatedAt,
 		spec.CreatedBy,
@@ -150,4 +160,29 @@ func toNullString(value float64) sql.NullString {
 		String: strconv.FormatFloat(value, 'f', 2, 64),
 		Valid:  true,
 	}
+}
+
+func formatNullableResult(value sql.NullString) string {
+	if !value.Valid {
+		return "-"
+	}
+
+	return value.String
+}
+
+func handlerDeleteSpecs(s *state, cmd command) error {
+	if len(cmd.Args) != 1 {
+		return fmt.Errorf("deletespecs takes 1 argument")
+	}
+
+	testName := cmd.Args[0]
+
+	err := s.db.DeleteSpec(context.Background(), testName)
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("Specs deleted: %s\n", testName)
+
+	return nil
 }

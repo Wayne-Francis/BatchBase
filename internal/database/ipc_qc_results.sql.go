@@ -7,7 +7,6 @@ package database
 
 import (
 	"context"
-	"database/sql"
 	"time"
 
 	"github.com/google/uuid"
@@ -45,7 +44,7 @@ type AddIPCQCResultsParams struct {
 	TestName          string
 	Replicate         int32
 	TestDate          time.Time
-	Result            sql.NullString
+	Result            string
 	CreatedBy         uuid.UUID
 }
 
@@ -166,7 +165,7 @@ type GetIPCQCResultsRow struct {
 	TestName          string
 	Replicate         int32
 	TestDate          time.Time
-	Result            sql.NullString
+	Result            string
 }
 
 func (q *Queries) GetIPCQCResults(ctx context.Context) ([]GetIPCQCResultsRow, error) {
@@ -221,7 +220,7 @@ type GetIPCQCResultsByFPBatchRow struct {
 	TestName             string
 	Replicate            int32
 	TestDate             time.Time
-	Result               sql.NullString
+	Result               string
 }
 
 func (q *Queries) GetIPCQCResultsByFPBatch(ctx context.Context, finishedProductBatch string) ([]GetIPCQCResultsByFPBatchRow, error) {
@@ -275,7 +274,7 @@ type GetIPCQCResultsByIPBatchRow struct {
 	TestName          string
 	Replicate         int32
 	TestDate          time.Time
-	Result            sql.NullString
+	Result            string
 }
 
 func (q *Queries) GetIPCQCResultsByIPBatch(ctx context.Context, inProcessBatchLot string) ([]GetIPCQCResultsByIPBatchRow, error) {

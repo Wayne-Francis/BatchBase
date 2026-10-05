@@ -66,7 +66,7 @@ type IpcQcResult struct {
 	TestName          string
 	Replicate         int32
 	TestDate          time.Time
-	Result            sql.NullString
+	Result            string
 	CreatedBy         uuid.UUID
 }
 
@@ -87,7 +87,7 @@ type QcRelease struct {
 	TestName             string
 	Replicate            int32
 	TestDate             time.Time
-	Result               sql.NullString
+	Result               string
 	CreatedBy            uuid.UUID
 }
 
