@@ -46,6 +46,7 @@ func getBatchStatus(s *state, batchLot string) (BatchStatus, error) {
 		if err != nil {
 			return batchStatus, fmt.Errorf("error checking IP batch existence: %v", err)
 		}
+
 		if !exists {
 			return batchStatus, fmt.Errorf("IP batch does not exist: %v", batchLot)
 		}
@@ -63,23 +64,31 @@ func getBatchStatus(s *state, batchLot string) (BatchStatus, error) {
 		} else if len(ipcResults) < 10 {
 			batchStatus.BUResult = "INCOMPLETE"
 		} else if len(ipcResults) == 10 {
-
 			blendSpec, err := s.db.GetSpecsByTestName(
 				context.Background(),
-				"BlendUniformity",
+				"Blend Uniformity",
 			)
 			if err != nil {
-				return batchStatus, fmt.Errorf("error retrieving Blend spec: %v", err)
+				return batchStatus, fmt.Errorf(
+					"error retrieving Blend Uniformity spec: %v",
+					err,
+				)
 			}
 
 			blendSpecMin, err := strconv.ParseFloat(blendSpec.MinResult.String, 64)
 			if err != nil {
-				return batchStatus, fmt.Errorf("invalid Blend minimum specification: %v", err)
+				return batchStatus, fmt.Errorf(
+					"invalid Blend minimum specification: %v",
+					err,
+				)
 			}
 
 			blendSpecMax, err := strconv.ParseFloat(blendSpec.MaxResult.String, 64)
 			if err != nil {
-				return batchStatus, fmt.Errorf("invalid Blend maximum specification: %v", err)
+				return batchStatus, fmt.Errorf(
+					"invalid Blend maximum specification: %v",
+					err,
+				)
 			}
 
 			blendTest := true
@@ -90,7 +99,10 @@ func getBatchStatus(s *state, batchLot string) (BatchStatus, error) {
 				if result.TestName == "Blend" {
 					blendResult, err := strconv.ParseFloat(result.Result, 64)
 					if err != nil {
-						return batchStatus, fmt.Errorf("invalid Blend result: %v", err)
+						return batchStatus, fmt.Errorf(
+							"invalid Blend result: %v",
+							err,
+						)
 					}
 
 					blendResults = append(blendResults, blendResult)
@@ -129,34 +141,52 @@ func getBatchStatus(s *state, batchLot string) (BatchStatus, error) {
 
 			blendSpecMeanMin, err := strconv.ParseFloat(blendSpec.MeanMin.String, 64)
 			if err != nil {
-				return batchStatus, fmt.Errorf("invalid Blend minimum specification: %v", err)
+				return batchStatus, fmt.Errorf(
+					"invalid Blend minimum mean specification: %v",
+					err,
+				)
 			}
 
 			blendSpecMeanMax, err := strconv.ParseFloat(blendSpec.MeanMax.String, 64)
 			if err != nil {
-				return batchStatus, fmt.Errorf("invalid Blend maximum specification: %v", err)
+				return batchStatus, fmt.Errorf(
+					"invalid Blend maximum mean specification: %v",
+					err,
+				)
 			}
 
 			if average < blendSpecMeanMin || average > blendSpecMeanMax {
 				blendTest = false
 				blendFailures = append(
 					blendFailures,
-					fmt.Sprintf("Average outside specification: %.2f", average),
+					fmt.Sprintf(
+						"Average outside specification: %.2f",
+						average,
+					),
 				)
 			}
 
 			rsd := (sd / average) * 100
 
-			blendSpecRsdLimit, err := strconv.ParseFloat(blendSpec.RsdLimit.String, 64)
+			blendSpecRsdLimit, err := strconv.ParseFloat(
+				blendSpec.RsdLimit.String,
+				64,
+			)
 			if err != nil {
-				return batchStatus, fmt.Errorf("invalid Blend RSD specification: %v", err)
+				return batchStatus, fmt.Errorf(
+					"invalid Blend RSD specification: %v",
+					err,
+				)
 			}
 
 			if rsd > blendSpecRsdLimit {
 				blendTest = false
 				blendFailures = append(
 					blendFailures,
-					fmt.Sprintf("RSD outside specification: %.2f", rsd),
+					fmt.Sprintf(
+						"RSD outside specification: %.2f",
+						rsd,
+					),
 				)
 			}
 
@@ -164,11 +194,11 @@ func getBatchStatus(s *state, batchLot string) (BatchStatus, error) {
 				batchStatus.BUResult = "PASS"
 			} else {
 				batchStatus.BUResult = "FAIL"
+
 				for _, failure := range blendFailures {
 					fmt.Printf("  - %s\n", failure)
 				}
 			}
-
 		} else {
 			return batchStatus, fmt.Errorf(
 				"error: too many IPC replicates found: %d",
@@ -181,7 +211,10 @@ func getBatchStatus(s *state, batchLot string) (BatchStatus, error) {
 			batchLot,
 		)
 		if err != nil && err != sql.ErrNoRows {
-			return batchStatus, fmt.Errorf("error checking FP batch existence: %v", err)
+			return batchStatus, fmt.Errorf(
+				"error checking FP batch existence: %v",
+				err,
+			)
 		}
 
 		if err == sql.ErrNoRows {
@@ -212,7 +245,10 @@ func getBatchStatus(s *state, batchLot string) (BatchStatus, error) {
 
 				assayResult, err = strconv.ParseFloat(result.Result, 64)
 				if err != nil {
-					return batchStatus, fmt.Errorf("invalid Assay result: %v", err)
+					return batchStatus, fmt.Errorf(
+						"invalid Assay result: %v",
+						err,
+					)
 				}
 			}
 
@@ -234,17 +270,32 @@ func getBatchStatus(s *state, batchLot string) (BatchStatus, error) {
 				"Assay",
 			)
 			if err != nil {
-				return batchStatus, fmt.Errorf("error retrieving Assay spec: %v", err)
+				return batchStatus, fmt.Errorf(
+					"error retrieving Assay spec: %v",
+					err,
+				)
 			}
 
-			assayMin, err := strconv.ParseFloat(assaySpec.MinResult.String, 64)
+			assayMin, err := strconv.ParseFloat(
+				assaySpec.MinResult.String,
+				64,
+			)
 			if err != nil {
-				return batchStatus, fmt.Errorf("invalid Assay minimum specification: %v", err)
+				return batchStatus, fmt.Errorf(
+					"invalid Assay minimum specification: %v",
+					err,
+				)
 			}
 
-			assayMax, err := strconv.ParseFloat(assaySpec.MaxResult.String, 64)
+			assayMax, err := strconv.ParseFloat(
+				assaySpec.MaxResult.String,
+				64,
+			)
 			if err != nil {
-				return batchStatus, fmt.Errorf("invalid Assay maximum specification: %v", err)
+				return batchStatus, fmt.Errorf(
+					"invalid Assay maximum specification: %v",
+					err,
+				)
 			}
 
 			if assayResult < assayMin || assayResult > assayMax {
@@ -264,113 +315,150 @@ func getBatchStatus(s *state, batchLot string) (BatchStatus, error) {
 				emittedDoseCount,
 			)
 		} else {
-			EDSpec, err := s.db.GetSpecsByTestName(
+			edSpec, err := s.db.GetSpecsByTestName(
 				context.Background(),
 				"EmittedDose",
 			)
 			if err != nil {
-				return batchStatus, fmt.Errorf("error retrieving EmittedDose spec: %v", err)
+				return batchStatus, fmt.Errorf(
+					"error retrieving EmittedDose spec: %v",
+					err,
+				)
 			}
 
-			EDSpecMin, err := strconv.ParseFloat(EDSpec.MinResult.String, 64)
+			edSpecMin, err := strconv.ParseFloat(
+				edSpec.MinResult.String,
+				64,
+			)
 			if err != nil {
-				return batchStatus, fmt.Errorf("invalid EmittedDose minimum specification: %v", err)
+				return batchStatus, fmt.Errorf(
+					"invalid EmittedDose minimum specification: %v",
+					err,
+				)
 			}
 
-			EDSpecMax, err := strconv.ParseFloat(EDSpec.MaxResult.String, 64)
+			edSpecMax, err := strconv.ParseFloat(
+				edSpec.MaxResult.String,
+				64,
+			)
 			if err != nil {
-				return batchStatus, fmt.Errorf("invalid EmittedDose maximum specification: %v", err)
+				return batchStatus, fmt.Errorf(
+					"invalid EmittedDose maximum specification: %v",
+					err,
+				)
 			}
 
-			EDTest := true
-			var EDResults []float64
-			var EDFailures []string
+			edTest := true
+			var edResults []float64
+			var edFailures []string
 
 			for _, result := range qcResults {
 				if result.TestName == "EmittedDose" {
-					EDResult, err := strconv.ParseFloat(result.Result, 64)
+					edResult, err := strconv.ParseFloat(result.Result, 64)
 					if err != nil {
-						return batchStatus, fmt.Errorf("invalid EmittedDose result: %v", err)
+						return batchStatus, fmt.Errorf(
+							"invalid EmittedDose result: %v",
+							err,
+						)
 					}
 
-					EDResults = append(EDResults, EDResult)
+					edResults = append(edResults, edResult)
 
-					if EDResult < EDSpecMin || EDResult > EDSpecMax {
-						EDTest = false
-						EDFailures = append(
-							EDFailures,
+					if edResult < edSpecMin || edResult > edSpecMax {
+						edTest = false
+						edFailures = append(
+							edFailures,
 							fmt.Sprintf(
 								"Replicate %s outside specification: %.2f",
 								result.Replicate,
-								EDResult,
+								edResult,
 							),
 						)
 					}
 				}
 			}
 
-			EDsum := 0.0
-			for _, result := range EDResults {
-				EDsum += result
+			edSum := 0.0
+			for _, result := range edResults {
+				edSum += result
 			}
 
-			EDaverage := EDsum / float64(len(EDResults))
+			edAverage := edSum / float64(len(edResults))
 
-			var EDsumSquaredDifferences float64
+			var edSumSquaredDifferences float64
 
-			for _, result := range EDResults {
-				difference := result - EDaverage
-				EDsumSquaredDifferences += difference * difference
+			for _, result := range edResults {
+				difference := result - edAverage
+				edSumSquaredDifferences += difference * difference
 			}
 
-			EDsd := math.Sqrt(
-				EDsumSquaredDifferences / float64(len(EDResults)-1),
+			edSd := math.Sqrt(
+				edSumSquaredDifferences / float64(len(edResults)-1),
 			)
 
-			EDSpecMeanMin, err := strconv.ParseFloat(EDSpec.MeanMin.String, 64)
+			edSpecMeanMin, err := strconv.ParseFloat(
+				edSpec.MeanMin.String,
+				64,
+			)
 			if err != nil {
-				return batchStatus, fmt.Errorf("invalid EmittedDose minimum specification: %v", err)
+				return batchStatus, fmt.Errorf(
+					"invalid EmittedDose minimum mean specification: %v",
+					err,
+				)
 			}
 
-			EDSpecMeanMax, err := strconv.ParseFloat(EDSpec.MeanMax.String, 64)
+			edSpecMeanMax, err := strconv.ParseFloat(
+				edSpec.MeanMax.String,
+				64,
+			)
 			if err != nil {
-				return batchStatus, fmt.Errorf("invalid EmittedDose maximum specification: %v", err)
+				return batchStatus, fmt.Errorf(
+					"invalid EmittedDose maximum mean specification: %v",
+					err,
+				)
 			}
 
-			if EDaverage < EDSpecMeanMin || EDaverage > EDSpecMeanMax {
-				EDTest = false
-				EDFailures = append(
-					EDFailures,
+			if edAverage < edSpecMeanMin || edAverage > edSpecMeanMax {
+				edTest = false
+				edFailures = append(
+					edFailures,
 					fmt.Sprintf(
 						"Average outside specification: %.2f",
-						EDaverage,
+						edAverage,
 					),
 				)
 			}
 
-			EDrsd := (EDsd / EDaverage) * 100
+			edRsd := (edSd / edAverage) * 100
 
-			EDRsdLimit, err := strconv.ParseFloat(EDSpec.RsdLimit.String, 64)
+			edRsdLimit, err := strconv.ParseFloat(
+				edSpec.RsdLimit.String,
+				64,
+			)
 			if err != nil {
-				return batchStatus, fmt.Errorf("invalid EmittedDose RSD specification: %v", err)
+				return batchStatus, fmt.Errorf(
+					"invalid EmittedDose RSD specification: %v",
+					err,
+				)
 			}
 
-			if EDrsd > EDRsdLimit {
-				EDTest = false
-				EDFailures = append(
-					EDFailures,
+			if edRsd > edRsdLimit {
+				edTest = false
+				edFailures = append(
+					edFailures,
 					fmt.Sprintf(
 						"RSD outside specification: %.2f",
-						EDrsd,
+						edRsd,
 					),
 				)
 			}
 
-			if EDTest {
+			if edTest {
 				batchStatus.EDResult = "PASS"
 			} else {
 				batchStatus.EDResult = "FAIL"
-				for _, failure := range EDFailures {
+
+				for _, failure := range edFailures {
 					fmt.Printf("  - %s\n", failure)
 				}
 			}
@@ -381,10 +469,17 @@ func getBatchStatus(s *state, batchLot string) (BatchStatus, error) {
 
 		exists, err := s.db.CheckFPBatchExists(context.Background(), batchLot)
 		if err != nil {
-			return batchStatus, fmt.Errorf("error checking FP batch existence: %v", err)
+			return batchStatus, fmt.Errorf(
+				"error checking FP batch existence: %v",
+				err,
+			)
 		}
+
 		if !exists {
-			return batchStatus, fmt.Errorf("FP batch does not exist: %v\n", batchLot)
+			return batchStatus, fmt.Errorf(
+				"FP batch does not exist: %v\n",
+				batchLot,
+			)
 		}
 
 		qcResults, err := s.db.GetQCReleaseResultsByFPBatch(
@@ -405,7 +500,10 @@ func getBatchStatus(s *state, batchLot string) (BatchStatus, error) {
 
 				assayResult, err = strconv.ParseFloat(result.Result, 64)
 				if err != nil {
-					return batchStatus, fmt.Errorf("invalid Assay result: %v", err)
+					return batchStatus, fmt.Errorf(
+						"invalid Assay result: %v",
+						err,
+					)
 				}
 			}
 
@@ -427,17 +525,32 @@ func getBatchStatus(s *state, batchLot string) (BatchStatus, error) {
 				"Assay",
 			)
 			if err != nil {
-				return batchStatus, fmt.Errorf("error retrieving Assay spec: %v", err)
+				return batchStatus, fmt.Errorf(
+					"error retrieving Assay spec: %v",
+					err,
+				)
 			}
 
-			assayMin, err := strconv.ParseFloat(assaySpec.MinResult.String, 64)
+			assayMin, err := strconv.ParseFloat(
+				assaySpec.MinResult.String,
+				64,
+			)
 			if err != nil {
-				return batchStatus, fmt.Errorf("invalid Assay minimum specification: %v", err)
+				return batchStatus, fmt.Errorf(
+					"invalid Assay minimum specification: %v",
+					err,
+				)
 			}
 
-			assayMax, err := strconv.ParseFloat(assaySpec.MaxResult.String, 64)
+			assayMax, err := strconv.ParseFloat(
+				assaySpec.MaxResult.String,
+				64,
+			)
 			if err != nil {
-				return batchStatus, fmt.Errorf("invalid Assay maximum specification: %v", err)
+				return batchStatus, fmt.Errorf(
+					"invalid Assay maximum specification: %v",
+					err,
+				)
 			}
 
 			if assayResult < assayMin || assayResult > assayMax {
@@ -457,113 +570,150 @@ func getBatchStatus(s *state, batchLot string) (BatchStatus, error) {
 				emittedDoseCount,
 			)
 		} else {
-			EDSpec, err := s.db.GetSpecsByTestName(
+			edSpec, err := s.db.GetSpecsByTestName(
 				context.Background(),
 				"EmittedDose",
 			)
 			if err != nil {
-				return batchStatus, fmt.Errorf("error retrieving EmittedDose spec: %v", err)
+				return batchStatus, fmt.Errorf(
+					"error retrieving EmittedDose spec: %v",
+					err,
+				)
 			}
 
-			EDSpecMin, err := strconv.ParseFloat(EDSpec.MinResult.String, 64)
+			edSpecMin, err := strconv.ParseFloat(
+				edSpec.MinResult.String,
+				64,
+			)
 			if err != nil {
-				return batchStatus, fmt.Errorf("invalid EmittedDose minimum specification: %v", err)
+				return batchStatus, fmt.Errorf(
+					"invalid EmittedDose minimum specification: %v",
+					err,
+				)
 			}
 
-			EDSpecMax, err := strconv.ParseFloat(EDSpec.MaxResult.String, 64)
+			edSpecMax, err := strconv.ParseFloat(
+				edSpec.MaxResult.String,
+				64,
+			)
 			if err != nil {
-				return batchStatus, fmt.Errorf("invalid EmittedDose maximum specification: %v", err)
+				return batchStatus, fmt.Errorf(
+					"invalid EmittedDose maximum specification: %v",
+					err,
+				)
 			}
 
-			EDTest := true
-			var EDResults []float64
-			var EDFailures []string
+			edTest := true
+			var edResults []float64
+			var edFailures []string
 
 			for _, result := range qcResults {
 				if result.TestName == "EmittedDose" {
-					EDResult, err := strconv.ParseFloat(result.Result, 64)
+					edResult, err := strconv.ParseFloat(result.Result, 64)
 					if err != nil {
-						return batchStatus, fmt.Errorf("invalid EmittedDose result: %v", err)
+						return batchStatus, fmt.Errorf(
+							"invalid EmittedDose result: %v",
+							err,
+						)
 					}
 
-					EDResults = append(EDResults, EDResult)
+					edResults = append(edResults, edResult)
 
-					if EDResult < EDSpecMin || EDResult > EDSpecMax {
-						EDTest = false
-						EDFailures = append(
-							EDFailures,
+					if edResult < edSpecMin || edResult > edSpecMax {
+						edTest = false
+						edFailures = append(
+							edFailures,
 							fmt.Sprintf(
 								"Replicate %s outside specification: %.2f",
 								result.Replicate,
-								EDResult,
+								edResult,
 							),
 						)
 					}
 				}
 			}
 
-			EDsum := 0.0
-			for _, result := range EDResults {
-				EDsum += result
+			edSum := 0.0
+			for _, result := range edResults {
+				edSum += result
 			}
 
-			EDaverage := EDsum / float64(len(EDResults))
+			edAverage := edSum / float64(len(edResults))
 
-			var EDsumSquaredDifferences float64
+			var edSumSquaredDifferences float64
 
-			for _, result := range EDResults {
-				difference := result - EDaverage
-				EDsumSquaredDifferences += difference * difference
+			for _, result := range edResults {
+				difference := result - edAverage
+				edSumSquaredDifferences += difference * difference
 			}
 
-			EDsd := math.Sqrt(
-				EDsumSquaredDifferences / float64(len(EDResults)-1),
+			edSd := math.Sqrt(
+				edSumSquaredDifferences / float64(len(edResults)-1),
 			)
 
-			EDSpecMeanMin, err := strconv.ParseFloat(EDSpec.MeanMin.String, 64)
+			edSpecMeanMin, err := strconv.ParseFloat(
+				edSpec.MeanMin.String,
+				64,
+			)
 			if err != nil {
-				return batchStatus, fmt.Errorf("invalid EmittedDose minimum specification: %v", err)
+				return batchStatus, fmt.Errorf(
+					"invalid EmittedDose minimum mean specification: %v",
+					err,
+				)
 			}
 
-			EDSpecMeanMax, err := strconv.ParseFloat(EDSpec.MeanMax.String, 64)
+			edSpecMeanMax, err := strconv.ParseFloat(
+				edSpec.MeanMax.String,
+				64,
+			)
 			if err != nil {
-				return batchStatus, fmt.Errorf("invalid EmittedDose maximum specification: %v", err)
+				return batchStatus, fmt.Errorf(
+					"invalid EmittedDose maximum mean specification: %v",
+					err,
+				)
 			}
 
-			if EDaverage < EDSpecMeanMin || EDaverage > EDSpecMeanMax {
-				EDTest = false
-				EDFailures = append(
-					EDFailures,
+			if edAverage < edSpecMeanMin || edAverage > edSpecMeanMax {
+				edTest = false
+				edFailures = append(
+					edFailures,
 					fmt.Sprintf(
 						"Average outside specification: %.2f",
-						EDaverage,
+						edAverage,
 					),
 				)
 			}
 
-			EDrsd := (EDsd / EDaverage) * 100
+			edRsd := (edSd / edAverage) * 100
 
-			EDRsdLimit, err := strconv.ParseFloat(EDSpec.RsdLimit.String, 64)
+			edRsdLimit, err := strconv.ParseFloat(
+				edSpec.RsdLimit.String,
+				64,
+			)
 			if err != nil {
-				return batchStatus, fmt.Errorf("invalid EmittedDose RSD specification: %v", err)
+				return batchStatus, fmt.Errorf(
+					"invalid EmittedDose RSD specification: %v",
+					err,
+				)
 			}
 
-			if EDrsd > EDRsdLimit {
-				EDTest = false
-				EDFailures = append(
-					EDFailures,
+			if edRsd > edRsdLimit {
+				edTest = false
+				edFailures = append(
+					edFailures,
 					fmt.Sprintf(
 						"RSD outside specification: %.2f",
-						EDrsd,
+						edRsd,
 					),
 				)
 			}
 
-			if EDTest {
+			if edTest {
 				batchStatus.EDResult = "PASS"
 			} else {
 				batchStatus.EDResult = "FAIL"
-				for _, failure := range EDFailures {
+
+				for _, failure := range edFailures {
 					fmt.Printf("  - %s\n", failure)
 				}
 			}
@@ -578,7 +728,10 @@ func getBatchStatus(s *state, batchLot string) (BatchStatus, error) {
 				batchStatus.IPBatch = "No IP batch associated"
 				batchStatus.BUResult = "INCOMPLETE"
 
-				fmt.Printf("FP batch has no IP batch associated: %v\n", batchLot)
+				fmt.Printf(
+					"FP batch has no IP batch associated: %v\n",
+					batchLot,
+				)
 
 				return batchStatus, nil
 			}
@@ -604,23 +757,37 @@ func getBatchStatus(s *state, batchLot string) (BatchStatus, error) {
 		} else if len(ipcResults) < 10 {
 			batchStatus.BUResult = "INCOMPLETE"
 		} else if len(ipcResults) == 10 {
-
 			blendSpec, err := s.db.GetSpecsByTestName(
 				context.Background(),
-				"BlendUniformity",
+				"Blend Uniformity",
 			)
 			if err != nil {
-				return batchStatus, fmt.Errorf("error retrieving Blend spec: %v", err)
+				return batchStatus, fmt.Errorf(
+					"error retrieving Blend Uniformity spec: %v",
+					err,
+				)
 			}
 
-			blendSpecMin, err := strconv.ParseFloat(blendSpec.MinResult.String, 64)
+			blendSpecMin, err := strconv.ParseFloat(
+				blendSpec.MinResult.String,
+				64,
+			)
 			if err != nil {
-				return batchStatus, fmt.Errorf("invalid Blend minimum specification: %v", err)
+				return batchStatus, fmt.Errorf(
+					"invalid Blend minimum specification: %v",
+					err,
+				)
 			}
 
-			blendSpecMax, err := strconv.ParseFloat(blendSpec.MaxResult.String, 64)
+			blendSpecMax, err := strconv.ParseFloat(
+				blendSpec.MaxResult.String,
+				64,
+			)
 			if err != nil {
-				return batchStatus, fmt.Errorf("invalid Blend maximum specification: %v", err)
+				return batchStatus, fmt.Errorf(
+					"invalid Blend maximum specification: %v",
+					err,
+				)
 			}
 
 			blendTest := true
@@ -631,7 +798,10 @@ func getBatchStatus(s *state, batchLot string) (BatchStatus, error) {
 				if result.TestName == "Blend" {
 					blendResult, err := strconv.ParseFloat(result.Result, 64)
 					if err != nil {
-						return batchStatus, fmt.Errorf("invalid Blend result: %v", err)
+						return batchStatus, fmt.Errorf(
+							"invalid Blend result: %v",
+							err,
+						)
 					}
 
 					blendResults = append(blendResults, blendResult)
@@ -668,36 +838,60 @@ func getBatchStatus(s *state, batchLot string) (BatchStatus, error) {
 				sumSquaredDifferences / float64(len(blendResults)-1),
 			)
 
-			blendSpecMeanMin, err := strconv.ParseFloat(blendSpec.MeanMin.String, 64)
+			blendSpecMeanMin, err := strconv.ParseFloat(
+				blendSpec.MeanMin.String,
+				64,
+			)
 			if err != nil {
-				return batchStatus, fmt.Errorf("invalid Blend minimum specification: %v", err)
+				return batchStatus, fmt.Errorf(
+					"invalid Blend minimum mean specification: %v",
+					err,
+				)
 			}
 
-			blendSpecMeanMax, err := strconv.ParseFloat(blendSpec.MeanMax.String, 64)
+			blendSpecMeanMax, err := strconv.ParseFloat(
+				blendSpec.MeanMax.String,
+				64,
+			)
 			if err != nil {
-				return batchStatus, fmt.Errorf("invalid Blend maximum specification: %v", err)
+				return batchStatus, fmt.Errorf(
+					"invalid Blend maximum mean specification: %v",
+					err,
+				)
 			}
 
 			if average < blendSpecMeanMin || average > blendSpecMeanMax {
 				blendTest = false
 				blendFailures = append(
 					blendFailures,
-					fmt.Sprintf("Average outside specification: %.2f", average),
+					fmt.Sprintf(
+						"Average outside specification: %.2f",
+						average,
+					),
 				)
 			}
 
 			rsd := (sd / average) * 100
 
-			blendSpecRsdLimit, err := strconv.ParseFloat(blendSpec.RsdLimit.String, 64)
+			blendSpecRsdLimit, err := strconv.ParseFloat(
+				blendSpec.RsdLimit.String,
+				64,
+			)
 			if err != nil {
-				return batchStatus, fmt.Errorf("invalid Blend RSD specification: %v", err)
+				return batchStatus, fmt.Errorf(
+					"invalid Blend RSD specification: %v",
+					err,
+				)
 			}
 
 			if rsd > blendSpecRsdLimit {
 				blendTest = false
 				blendFailures = append(
 					blendFailures,
-					fmt.Sprintf("RSD outside specification: %.2f", rsd),
+					fmt.Sprintf(
+						"RSD outside specification: %.2f",
+						rsd,
+					),
 				)
 			}
 
@@ -705,11 +899,11 @@ func getBatchStatus(s *state, batchLot string) (BatchStatus, error) {
 				batchStatus.BUResult = "PASS"
 			} else {
 				batchStatus.BUResult = "FAIL"
+
 				for _, failure := range blendFailures {
 					fmt.Printf("  - %s\n", failure)
 				}
 			}
-
 		} else {
 			return batchStatus, fmt.Errorf(
 				"error: too many IPC replicates found: %d",

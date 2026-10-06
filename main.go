@@ -112,6 +112,9 @@ func main() {
 	cmds.register("batchhistorysummary", handlerBatchHistorySummary)
 	cmds.register("batchhistoryfull", handlerBatchHistoryFull)
 
+	//seed
+	cmds.register("seed", handlerSeed)
+
 	args := os.Args
 
 	if len(args) < 2 {
