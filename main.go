@@ -109,6 +109,8 @@ func main() {
 	// Batch History
 	cmds.register("materialhistory", handlerMaterialHistory)
 	cmds.register("batchstatus", handlerBatchStatus)
+	cmds.register("batchhistorysummary", handlerBatchHistorySummary)
+	cmds.register("batchhistoryfull", handlerBatchHistoryFull)
 
 	args := os.Args
 
