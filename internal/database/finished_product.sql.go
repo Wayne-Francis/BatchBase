@@ -100,6 +100,19 @@ func (q *Queries) CheckIPBatchExistsInFill(ctx context.Context, inProcessBatchLo
 	return exists, err
 }
 
+const countFinishedProducts = `-- name: CountFinishedProducts :one
+
+SELECT COUNT(*)
+FROM finished_product
+`
+
+func (q *Queries) CountFinishedProducts(ctx context.Context) (int64, error) {
+	row := q.db.QueryRowContext(ctx, countFinishedProducts)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const deleteAllFinishedProducts = `-- name: DeleteAllFinishedProducts :exec
 
 DELETE FROM finished_product

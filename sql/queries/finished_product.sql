@@ -78,3 +78,7 @@ SELECT EXISTS (
     WHERE finished_product_batch = $1
 );
 
+-- name: CountFinishedProducts :one
+
+SELECT COUNT(*)
+FROM finished_product;

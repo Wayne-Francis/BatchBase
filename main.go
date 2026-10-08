@@ -115,15 +115,19 @@ func main() {
 	//seed
 	cmds.register("seed", handlerSeed)
 
-	args := os.Args
+	// Plots
+	cmds.register("plotassay", handlerPlotAssay)
+	cmds.register("plotblend", handlerPlotBlend)
+	cmds.register("plotemitteddose", handlerPlotEmittedDose)
 
-	if len(args) < 2 {
-		log.Fatalf("please type commands")
+	if len(os.Args) < 2 {
+		startDashboard(s, &cmds)
+		return
 	}
 
 	c := command{
-		Name: args[1],
-		Args: args[2:],
+		Name: os.Args[1],
+		Args: os.Args[2:],
 	}
 
 	err = cmds.run(s, c)

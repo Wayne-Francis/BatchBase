@@ -74,6 +74,19 @@ func (q *Queries) CheckMaterialLotExistsInMaterialUsage(ctx context.Context, mat
 	return exists, err
 }
 
+const countMaterials = `-- name: CountMaterials :one
+
+SELECT COUNT(*)
+FROM materials
+`
+
+func (q *Queries) CountMaterials(ctx context.Context) (int64, error) {
+	row := q.db.QueryRowContext(ctx, countMaterials)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const deleteMaterialFromMaterials = `-- name: DeleteMaterialFromMaterials :exec
 DELETE FROM materials
 WHERE material_lot = $1

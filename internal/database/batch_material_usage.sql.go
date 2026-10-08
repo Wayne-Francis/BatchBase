@@ -58,6 +58,19 @@ func (q *Queries) AddMaterialUsage(ctx context.Context, arg AddMaterialUsagePara
 	return i, err
 }
 
+const countInProcessBatches = `-- name: CountInProcessBatches :one
+
+SELECT COUNT(DISTINCT In_process_batch_lot)
+FROM batch_material_usage
+`
+
+func (q *Queries) CountInProcessBatches(ctx context.Context) (int64, error) {
+	row := q.db.QueryRowContext(ctx, countInProcessBatches)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const countMaterialUsageForIPBatch = `-- name: CountMaterialUsageForIPBatch :one
 SELECT COUNT(*)
 FROM batch_material_usage

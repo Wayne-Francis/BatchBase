@@ -33,3 +33,8 @@ SELECT EXISTS (
     FROM batch_material_usage
     WHERE material_lot = $1
 );
+
+-- name: CountMaterials :one
+
+SELECT COUNT(*)
+FROM materials;

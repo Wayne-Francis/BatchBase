@@ -483,10 +483,21 @@ func seedMaterialUsageSet(
 	index int,
 	now time.Time,
 ) error {
-	materials := []string{
-		fmt.Sprintf("API-SX-%03d", index),
-		fmt.Sprintf("LAC-MONO-%03d", index),
-		fmt.Sprintf("LAC-FINE-%03d", index),
+	// Deliberately share material lots between batches.
+	// This gives the seed data realistic many-to-many material traceability.
+	materialSets := map[int][]string{
+		1: {"API-SX-001", "LAC-MONO-001", "LAC-FINE-002"},
+		2: {"API-SX-002", "LAC-MONO-001", "LAC-FINE-003"},
+		3: {"API-SX-001", "LAC-MONO-002", "LAC-FINE-001"},
+		4: {"API-SX-003", "LAC-MONO-002", "LAC-FINE-003"},
+		5: {"API-SX-002", "LAC-MONO-003", "LAC-FINE-002"},
+		6: {"API-SX-004", "LAC-MONO-001", "LAC-FINE-004"},
+		7: {"API-SX-001", "LAC-MONO-003", "LAC-FINE-001"},
+	}
+
+	materials, ok := materialSets[index]
+	if !ok {
+		return fmt.Errorf("no seed material set defined for index %d", index)
 	}
 
 	for _, materialLot := range materials {

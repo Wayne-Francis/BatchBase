@@ -24,6 +24,54 @@ func handlerMaterialHistory(s *state, cmd command) error {
 	fmt.Println()
 	fmt.Printf("Material Lot: %v\n", materialLot)
 
+	// Material history summary
+	fmt.Println()
+	fmt.Printf("Used In: %d IP Batches\n", len(iPBatches))
+
+	if len(iPBatches) > 0 {
+		fmt.Println()
+		fmt.Printf("%-15s %-15s %s\n", "IP Batch", "FP Batch", "Status")
+		fmt.Println("----------------------------------------")
+
+		for _, batch := range iPBatches {
+			finishedProduct, err := s.db.GetFinishedProductByIPBatch(
+				context.Background(),
+				batch.InProcessBatchLot,
+			)
+
+			if err != nil && err != sql.ErrNoRows {
+				return fmt.Errorf("error checking FP batch existence: %v", err)
+			}
+
+			fpBatch := "None"
+			if err == nil {
+				fpBatch = finishedProduct.FinishedProductBatch
+			}
+
+			batchStatus, err := getBatchStatus(s, batch.InProcessBatchLot)
+			if err != nil {
+				return err
+			}
+
+			status := "INCOMPLETE"
+
+			if batchStatus.BUResult == "PASS" &&
+				batchStatus.AssayResult == "PASS" &&
+				batchStatus.EDResult == "PASS" {
+				status = "PASS"
+			}
+
+			fmt.Printf(
+				"%-15s %-15s %s\n",
+				batch.InProcessBatchLot,
+				fpBatch,
+				status,
+			)
+		}
+	} else {
+		fmt.Println("No batches found")
+	}
+
 	for _, batch := range iPBatches {
 		fmt.Println()
 		fmt.Println("BATCH")

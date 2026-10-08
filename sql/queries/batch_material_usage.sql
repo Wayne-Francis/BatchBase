@@ -53,3 +53,8 @@ DELETE FROM batch_material_usage;
 SELECT COUNT(*)
 FROM batch_material_usage
 WHERE In_process_batch_lot = $1;
+
+-- name: CountInProcessBatches :one
+
+SELECT COUNT(DISTINCT In_process_batch_lot)
+FROM batch_material_usage;
